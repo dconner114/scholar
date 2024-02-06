@@ -43,6 +43,6 @@ app.listen(port, () => {
                 console.log('Database connection closed.');
             }
             process.exit();
-        });
+        }); 
     });
 })
