@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scholar</title>
+    <link rel="stylesheet" href="styles.css"></link>
+</head>
+
+<body>
+    <header>
+        <nav>
+
+            <button class="nav-button" onclick="showTab('logData')">Log</button>
+            <button class="nav-button" onclick="showTab('viewData')">Stats</button>
+        </nav>
+    </header>
+
+    <div id="logData" class="tab-content active">
+        <h1>My Sessions</h1>
+        <form>
+            <label for="course">Course</label>
+            <select id="course" name="course"></select> <!-- js populates options-->
+            <button onclick="newCourse()">+Course</button> <!-- new popup for adding courses -->
+            <label for="project">Project</label>
+            <select id="project" name="project"></select>
+            <button onclick="newProject()">+Project</button>
+            <label for="date">Date</label>
+            <input type="date" id="date" name="data">
+            <label for="startTime">Start</label>
+            <input type="time" id="startTime" name="startTime">
+            <label for="endTime">EndTime</label>
+            <input type="time" id="endTime" name="endTime">
+            <input type="submit" value="Submit">
+        </form>
+        <table id="logsTable">
+            <thead>
+                <tr>
+                    <th>Course</th>
+                    <th>Project</th>
+                    <th>Date</th>
+                    <th>Start</th>
+                    <th>End</th>
+                    <th>Description</th>
+                    <th>Total time (m)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- entries inserted when page loads -->
+            </tbody>
+        </table>
+        
+    </div>
+
+    <div id="viewData" class="tab-content">
+        <h1>Data Summary here</h1>
+        <p>graph etc</p>
+    </div>    
+
+    <script src="./scripts/script.js"></script>
+</body>
+
+</html>
