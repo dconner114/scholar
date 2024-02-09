@@ -4,13 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Scholar</title>
-    <link rel="stylesheet" href="styles.css"></link>
+    <link rel="stylesheet" href="styles.css" />
 </head>
 
 <body>
     <header>
         <nav>
-
             <button class="nav-button" onclick="showTab('logData')">Log</button>
             <button class="nav-button" onclick="showTab('viewData')">Stats</button>
         </nav>
@@ -18,21 +17,7 @@
 
     <div id="logData" class="tab-content active">
         <h1>My Sessions</h1>
-        <form>
-            <label for="course">Course</label>
-            <select id="course" name="course"></select> <!-- js populates options-->
-            <button onclick="newCourse()">+Course</button> <!-- new popup for adding courses -->
-            <label for="project">Project</label>
-            <select id="project" name="project"></select>
-            <button onclick="newProject()">+Project</button>
-            <label for="date">Date</label>
-            <input type="date" id="date" name="data">
-            <label for="startTime">Start</label>
-            <input type="time" id="startTime" name="startTime">
-            <label for="endTime">EndTime</label>
-            <input type="time" id="endTime" name="endTime">
-            <input type="submit" value="Submit">
-        </form>
+        <button id="newEntryButton">Add entry</button>      
         <table id="logsTable">
             <thead>
                 <tr>
@@ -52,10 +37,37 @@
         
     </div>
 
+    <div class="overlay" id="overlay"></div>
+
+    <div id="entryModal" class="modal-content">
+        <div class="modal-content">
+            <form id="entryForm" onsubmit="submitForm(event)">
+                <label for="course">Course</label>
+                <select id="course" name="course"></select> <!-- js populates options-->
+                <button onclick="newCourse(event)">+Course</button> <!-- new popup for adding courses -->
+                <label for="project">Project</label>
+                <select id="project" name="project"></select>
+                <button onclick="newProject(event)">+Project</button>
+                <label for="date">Date</label>
+                <input type="date" id="date" name="data">
+                <label for="startTime">Start</label>
+                <input type="time" id="startTime" name="startTime">
+                <label for="endTime">EndTime</label>
+                <input type="time" id="endTime" name="endTime">
+                <label for="description">Description</label>
+                <textarea id="description" name="description"></textarea>
+                <button type="button" id="close">Cancel</button>
+                <input type="submit" value="Submit">
+            </form>
+        </div>
+    </div>
+
     <div id="viewData" class="tab-content">
         <h1>Data Summary here</h1>
         <p>graph etc</p>
     </div>    
+
+    
 
     <script src="./scripts/script.js"></script>
 </body>
