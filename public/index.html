@@ -41,23 +41,23 @@
 
     <div id="entryModal" class="modal-content">
         <div class="modal-content">
-            <form id="entryForm" onsubmit="submitForm(event)">
+            <form id="entryForm" method='post' action="/">
                 <label for="course">Course</label>
-                <select id="course" name="course"></select> <!-- js populates options-->
-                <button onclick="newCourse(event)">+Course</button> <!-- new popup for adding courses -->
+                <select type="text" id="course" name="course"></select> <!-- js populates options-->
+                <!-- <button onclick="newCourse(event)">+Course</button>  new popup for adding courses -->
                 <label for="project">Project</label>
                 <select id="project" name="project"></select>
-                <button onclick="newProject(event)">+Project</button>
+                <!-- <button onclick="newProject(event)">+Project</button> -->
                 <label for="date">Date</label>
-                <input type="date" id="date" name="data">
+                <input type="date" id="date" name="date" required>
                 <label for="startTime">Start</label>
-                <input type="time" id="startTime" name="startTime">
+                <input type="time" id="startTime" name="startTime" required>
                 <label for="endTime">EndTime</label>
-                <input type="time" id="endTime" name="endTime">
+                <input type="time" id="endTime" name="endTime" required>
                 <label for="description">Description</label>
-                <textarea id="description" name="description"></textarea>
+                <textarea id="description" name="description" required></textarea>
                 <button type="button" id="close">Cancel</button>
-                <input type="submit" value="Submit">
+                <button type="submit" name="submit">Submit</button>
             </form>
         </div>
     </div>

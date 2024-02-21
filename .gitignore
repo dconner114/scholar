@@ -1,2 +1,3 @@
 node_modules/
-timelog.db
+backup_db/
+timelogs.db

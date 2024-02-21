@@ -12,7 +12,6 @@ function showTab(tabId) {
 
 document.addEventListener('DOMContentLoaded', function () {
 
-    const entryForm = document.getElementById("entryForm");
     // Function to fetch and display logs data
     function displayLogsData() {
         fetch('/api/logs')
@@ -129,39 +128,11 @@ document.addEventListener('DOMContentLoaded', function () {
         return `${month}-${day}-${year}`;
     }
 
-    function submitForm(event) {
-        event.preventDefault();
-        console.log('submitting');
-        // Get form data
-        const formData = new FormData(entryForm);
-
-        // Fetch POST request to your backend endpoint
-        fetch('/api/submit', {
-            method: 'POST',
-            'Content-Type': 'application/json', // Adjust the content type based on your backend requirements
-            body: JSON.stringify(Object.fromEntries(formData)), // Convert FormData to JSON
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            // Handle the response from the server if needed
-            console.log('Server response:', data);
-            // After processing the form data, you may want to hide the modal
-            hideModal();
-        })
-        .catch(error => {
-            console.error('Error sending data to the server:', error);
-        });
-    }
-
     function newCourse(event) {
         event.preventDefault();
         return;
     }
+    
     function newProject(event) {
         event.preventDefault();
         return;

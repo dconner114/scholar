@@ -1,70 +1,101 @@
-const { countReset } = require('console');
+const { time } = require('console');
 const express = require('express');
 const path = require('path');
 const sqlite3 = require('sqlite3').verbose();
-const db = new sqlite3.Database('timelog.db');
+const db = new sqlite3.Database('timelogs.db');
 
 const app = express();
 const port = 5000;
 
+app.use(express.urlencoded({extended: false}))
+app.use(express.json());
 app.use(express.static('public'));
 
 app.get('/', (req, res) => {
     res.sendFile(path.resolve(__dirname, 'public', 'index.html'));
 })
 
-// Endpoint to fetch data from the "logs" table
-app.get('/api/logs', (req, res) => {
-    const query = `
-        SELECT logs.*, course.course_name AS course_name, project.project_name AS project_name
-        FROM logs
-        LEFT JOIN course ON logs.course_id = course.course_id
-        LEFT JOIN project ON logs.project_id = project.project_id
-        ORDER BY date DESC
-    `;
+function elapsedTime (startTime, endTime) {
+    try {
+        let start = startTime.split(":");
+        let end = endTime.split(":");
+        let startHour = start[0];
+        let startMin = start[1];
+        let endHour = end[0];
+        let endMin = end[1];
 
-    db.all(query, [], (err, rows) => {
-        if (err) {
-            console.error(err.message);
-            res.status(500).json({ error: 'Internal Server Error' });
-        } else {
-            res.json(rows);
-        }
-    });
-});
+        startHour = parseInt(startHour);
+        startMin = parseInt(startMin);
+        endHour = parseInt(endHour);
+        endMin = parseInt(endMin);
+    
+        return (endHour * 60 + endMin) - (startHour * 60 + startMin);
+    } catch (error) {
+        console.error("Error parsing time values", error.message);
+        return null;
+    }
+}
 
-app.post('/api/submit', (req, res) => {
+app.post('/', (req, res) => {
     console.log("trying to post");
     try {
-        const { course, project, date, startTime, endTime, description } = req.body;
-        console.log(`start time: ${startTime}`);
-        console.log(`end time: ${endTime}`)
+        console.log(req.body);
+        let { course, project, date, startTime, endTime, description } = req.body;
         
-        db.get('SELECT course_id FROM course WHERE course_name = ?', [course], function (err, row) {
-            if (err) {
-                console.error(err.message);
-                res.status(500).json({ error: 'Internal Server Error' });
-            } else {
-                // Access the result in the callback function
-                const course_id = row ? row.course_id : null;
-                console.log('Retrieved course_id:', course_id);
-            }
-        })
-        db.get('SELECT project_id FROM project WHERE project_name = ?', [project], function (err, row) {
-            if (err) {
-                console.error(err.message);
-                res.status(500).json({ error: 'Internal Server Error' });
-            } else {
-                // Access the result in the callback function
-                const project_id = row ? row.project_id : null;
-                console.log('Retrieved project_id:', project_id);
-            }
-        })
+        let project_id = null;
+        let course_id = null;
 
-        const insertQuery = `
-            INSERT INTO logs (course_id, project_id, date, start_time, end_time, total_time, description)
-            VALUES (?, ?, ?, ?, ?)
-        `;
+        const getCourseId = () => {
+            return new Promise((resolve, reject) => {
+                db.get('SELECT id FROM course WHERE course_name = ?', [course], function (err, row) {
+                    if (err) {
+                        console.error(err.message);
+                        reject('Internal Server Error');
+                    } else {
+                        course_id = row ? row.id : null;
+                        console.log('Retrieved course_id:', course_id);
+                        resolve();
+                    }
+                });
+            });
+        };
+        const getProjectId = () => {
+            return new Promise((resolve, reject) => {
+                db.get('SELECT id FROM project WHERE project_name = ?', [project], function (err, row) {
+                    if (err) {
+                        console.error(err.message);
+                        reject('Internal Server Error');
+                    } else {
+                        project_id = row ? row.id : null;
+                        console.log('Retrieved project_id:', project_id);
+                        resolve();
+                    }
+                });
+            });
+        };
+
+        const mainFunction = async () => {
+            // Wait for both queries to complete
+            await Promise.all([getCourseId(), getProjectId()]);
+    
+            // remove hyphens from date
+            date = date.replace(/-/g, '');
+    
+            // determine elapsed time
+            const total_time = elapsedTime(startTime, endTime);
+    
+            const insertQuery = `
+                INSERT INTO logs (course_id, project_id, date, start_time, end_time, total_time, description)
+                VALUES (${course_id ?? 'NULL'}, ${project_id ?? 'NULL'}, ${date}, ${startTime}, ${endTime}, ${total_time}, ${description})
+            `;
+    
+            console.log(insertQuery);
+    
+            // Continue with the rest of your code...
+        };
+    
+        // Call the async function
+        mainFunction();
 
         // db.run(insertQuery, [course_id, project_id, date, startTime, endTime, total_time, description], (err) => {
         //     if (err) {
@@ -84,6 +115,26 @@ app.post('/api/submit', (req, res) => {
         console.error(error);
         res.status(400).json({error: 'Bad Request' });
     }
+});
+
+// Endpoint to fetch data from the "logs" table
+app.get('/api/logs', (req, res) => {
+    const query = `
+        SELECT logs.*, course.course_name AS course_name, project.project_name AS project_name
+        FROM logs
+        LEFT JOIN course ON logs.course_id = course.id
+        LEFT JOIN project ON logs.project_id = project.id
+        ORDER BY date DESC
+    `;
+
+    db.all(query, [], (err, rows) => {
+        if (err) {
+            console.error(err.message);
+            res.status(500).json({ error: 'Internal Server Error' });
+        } else {
+            res.json(rows);
+        }
+    });
 });
 
 
@@ -128,15 +179,4 @@ app.get('/api/options', (req, res) => {
 
 app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);
-
-    process.on('SIGINT', () => {
-        db.close((err) => {
-            if (err) {
-                console.error(err.message);
-            } else {
-                console.log('Database connection closed.');
-            }
-            process.exit();
-        }); 
-    });
 })
