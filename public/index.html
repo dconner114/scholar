@@ -12,6 +12,8 @@
         <nav>
             <button class="nav-button" onclick="showTab('logData')">Log</button>
             <button class="nav-button" onclick="showTab('viewData')">Stats</button>
+            <button class="nav-button" onclick="showTab('courseManager')">Courses</button>
+            <button class="nav-button" onclick = "showTab('projectManager')">Projects</button>
         </nav>
     </header>
 
@@ -34,38 +36,60 @@
                 <!-- entries inserted when page loads -->
             </tbody>
         </table>
-        
+        <div class="overlay" id="overlay"></div>
+            <div id="entryModal" class="modal-content">
+                <div class="modal-content">
+                    <form id="entryForm">
+                        <label for="course">Course</label>
+                        <select type="text" id="course" name="course"></select> <!-- js populates options-->
+                        <!-- <button onclick="newCourse(event)">+Course</button>  new popup for adding courses -->
+                        <label for="project">Project</label>
+                        <select type="text" id="project" name="project"></select>
+                        <!-- <button onclick="newProject(event)">+Project</button> -->
+                        <label for="date">Date</label>
+                        <input type="date" id="date" name="date" required>
+                        <label for="startTime">Start</label>
+                        <input type="time" id="startTime" name="startTime" required>
+                        <label for="endTime">EndTime</label>
+                        <input type="time" id="endTime" name="endTime" required>
+                        <label for="description">Description</label>
+                        <textarea id="description" name="description" required></textarea>
+                        <button type="button" id="close">Cancel</button>
+                        <button type="submit" name="submit">Submit</button>
+                    </form>
+                </div>
+            </div>
     </div>
 
-    <div class="overlay" id="overlay"></div>
-
-    <div id="entryModal" class="modal-content">
-        <div class="modal-content">
-            <form id="entryForm" method='post' action="/">
-                <label for="course">Course</label>
-                <select type="text" id="course" name="course"></select> <!-- js populates options-->
-                <!-- <button onclick="newCourse(event)">+Course</button>  new popup for adding courses -->
-                <label for="project">Project</label>
-                <select id="project" name="project"></select>
-                <!-- <button onclick="newProject(event)">+Project</button> -->
-                <label for="date">Date</label>
-                <input type="date" id="date" name="date" required>
-                <label for="startTime">Start</label>
-                <input type="time" id="startTime" name="startTime" required>
-                <label for="endTime">EndTime</label>
-                <input type="time" id="endTime" name="endTime" required>
-                <label for="description">Description</label>
-                <textarea id="description" name="description" required></textarea>
-                <button type="button" id="close">Cancel</button>
-                <button type="submit" name="submit">Submit</button>
-            </form>
-        </div>
-    </div>
+    
 
     <div id="viewData" class="tab-content">
         <h1>Data Summary here</h1>
         <p>graph etc</p>
     </div>    
+
+    <div id="courseManager" class="tab-content">
+        <h1>Courses</h1>
+        <p>a summary of your current courses</p>
+
+        <table id="courseTable">
+            <thead>
+                <tr>
+                    <th>Course</th>
+                    <th>Description</th>
+                    <th>hours</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- entries inserted when page loads -->
+            </tbody>
+        </table>
+    </div>
+
+    <div id="projectManager" class="tab-content">
+        <h1>Projects</h1>
+        <p>a summary of your current projects</p>
+    </div>
 
     
 

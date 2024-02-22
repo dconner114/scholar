@@ -12,12 +12,13 @@ function showTab(tabId) {
 
 document.addEventListener('DOMContentLoaded', function () {
 
+    let modalVisibility = false;
+
     // Function to fetch and display logs data
-    function displayLogsData() {
+    function loadLogsData() {
         fetch('/api/logs')
             .then(response => response.json())
             .then(data => {
-                // Assuming your table has an id of 'logsTable'
                 const table = document.getElementById('logsTable');
 
                 // Clear existing rows
@@ -43,7 +44,43 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // Call the function when the page loads
-    displayLogsData();
+    loadLogsData();
+
+    // function to load 
+    function loadCourseData() {
+        fetch('/api/courses')
+            .then(response => response.json())
+            .then(data => {
+                const table = document.getElementById('courseTable');
+
+                table.querySelector('tbody').innerHTML = '';
+
+                data.forEach(row => {
+                    const newRow = `<tr>
+                    <td>${row.course_name}</td>
+                    <td>${row.description || ''}</td>
+                    <td>${formatTime(row.total_time)}</td>
+                    <tr>`
+                    table.querySelector('tbody').insertAdjacentHTML('beforeend', newRow);
+                })
+            })
+            .catch(error => console.error('Error fetching data:', error));
+    }
+
+    loadCourseData()
+
+    function loadProjectData() {
+        fetch('/api/projects')
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(row => {
+
+                })
+            })
+            .catch(error => console.error('Error fetching data:', error));
+    }
+
+    loadProjectData()
 
     function displayModal() {
         if (entryForm) {
@@ -62,32 +99,31 @@ document.addEventListener('DOMContentLoaded', function () {
             courseSelect.innerHTML = '';
             projectSelect.innerHTML = '';
 
-            // Append default
-            const option = document.createElement('option');
-            option.value = "none";
-            option.textContent = "none";
-            courseSelect.appendChild(option);
-            projectSelect.appendChild(option);
+            // Append default "none" option to both select elements
+            const noneOption = document.createElement('option');
+            noneOption.value = "none";
+            noneOption.textContent = "none";
+            courseSelect.appendChild(noneOption.cloneNode(true));
+            projectSelect.appendChild(noneOption.cloneNode(true));
 
             // Populate options
             data.courses.forEach(course => {
                 const option = document.createElement('option');
-                option.value = course; // Replace with your actual value property
-                option.textContent = course; // Replace with your actual text property
+                option.value = course; 
+                option.textContent = course; 
                 courseSelect.appendChild(option);
             });
 
             data.projects.forEach(project => {
                 const option = document.createElement('option');
-                option.value = project.id; // Replace with your actual value property
-                option.textContent = project; // Replace with your actual text property
+                option.value = project; 
+                option.textContent = project; 
                 projectSelect.appendChild(option);
             });
+
+            modalVisibility = true;
         })
         .catch(error => console.error('Error fetching options:', error));
-        
-        // Add event listener for the escape key
-        document.addEventListener("keydown", handleEscapeKey);
 
         // Display the overlay and modal
         entryModal.style.display = "block";
@@ -97,12 +133,18 @@ document.addEventListener('DOMContentLoaded', function () {
     function hideModal() {
         entryModal.style.display = "none";
         overlay.style.display = "none";
+        modalVisibility = false;
     }
 
-    // Function to handle the escape key press
+    // Add event listener for the escape key
+    document.addEventListener("keydown", handleEscapeKey);
+
+    // Function to handle the escape key press and add entry shortcuts
     function handleEscapeKey(event) {
         if (event.key === "Escape") {
             hideModal();
+        } else if ((event.key === 'a' || event.key ==='A') && !modalVisibility) {
+            displayModal();
         }
     }
 
@@ -117,6 +159,20 @@ document.addEventListener('DOMContentLoaded', function () {
         entryModal.style.display = "none";
         entryButton.addEventListener("click", displayModal);
         closeButton.addEventListener("click", hideModal);
+    }
+
+    function formatTime(minutes) {
+        if (typeof minutes !== 'number' || isNaN(minutes)) {
+            return 'Invalid input';
+        }
+    
+        const hours = Math.floor(minutes / 60);
+        const remainingMinutes = minutes % 60;
+
+    
+        const formattedTime = `${hours}hr ${remainingMinutes > 0 ? remainingMinutes + 'm': ''}`;
+    
+        return formattedTime;
     }
 
     // Function to format the date as mm-dd-yyyy
@@ -137,4 +193,41 @@ document.addEventListener('DOMContentLoaded', function () {
         event.preventDefault();
         return;
     }
+
+    document.getElementById('entryForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+    
+        // Serialize the form data
+        var formData = new FormData(this);
+    
+        // Convert FormData to an object
+        var formDataObject = {};
+        formData.forEach(function(value, key){
+            formDataObject[key] = value;
+        });
+    
+        // Send a standard form submission
+        fetch('/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formDataObject)
+        })
+        .then(response => response.json())
+        .then(data => {
+
+            hideModal();
+            // Reload the page after displaying the alert
+            location.reload();
+
+            // Display a success message on the index page
+            alert(data.message);
+        })
+        .catch(error => {
+            // Handle errors if needed
+            console.error('Error submitting form', error);
+            alert('Error submitting form');
+        });
+    });
 });

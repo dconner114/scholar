@@ -86,27 +86,16 @@ app.post('/', (req, res) => {
     
             const insertQuery = `
                 INSERT INTO logs (course_id, project_id, date, start_time, end_time, total_time, description)
-                VALUES (${course_id ?? 'NULL'}, ${project_id ?? 'NULL'}, ${date}, ${startTime}, ${endTime}, ${total_time}, ${description})
+                VALUES (${course_id ?? 'NULL'}, ${project_id ?? 'NULL'}, ${date}, '${startTime}', '${endTime}', ${total_time}, '${description}');
             `;
-    
-            console.log(insertQuery);
-    
-            // Continue with the rest of your code...
+            console.log(insertQuery)
+            db.run(insertQuery);
         };
     
         // Call the async function
         mainFunction();
 
-        // db.run(insertQuery, [course_id, project_id, date, startTime, endTime, total_time, description], (err) => {
-        //     if (err) {
-        //         console.error(err.message);
-        //         res.status(500).json({ error: 'Internal Server Error' });
-        //     } else {
-        //         // Return success response or any relevant data
-        //         res.json({ success: true, message: 'Form data submitted successfully' });
-        //     }
-        // })
-        res.json({success: true, message: "testing"});
+        res.status(201).json({success: true, message: "Your entry has been successfully added"});
 
 
         // add validation here
@@ -132,6 +121,58 @@ app.get('/api/logs', (req, res) => {
             console.error(err.message);
             res.status(500).json({ error: 'Internal Server Error' });
         } else {
+            res.json(rows);
+        }
+    });
+});
+
+app.get('/api/courses', (req,res) => {
+    const query = `
+        SELECT 
+            course.id,
+            course.course_name,
+            course.description,
+            COALESCE(SUM(logs.total_time), 0) AS total_time
+        FROM
+            course
+        LEFT JOIN
+            logs ON course.id = logs.course_id
+        GROUP BY 
+            course.id;
+    `
+
+    db.all(query, [], (err, rows) => {
+        if (err) {
+            console.log(err.message);
+            res.status(500).json({error: 'Internal Server Error'});
+        } else {
+            console.log(rows);
+            res.json(rows);
+        }
+    });
+});
+
+app.get('/api/projects', (req,res) => {
+    const query = `
+        SELECT 
+            project.id,
+            project.project_name,
+            project.description,
+            COALESCE(SUM(logs.total_time), 0) AS total_time
+        FROM
+            project
+        LEFT JOIN
+            logs ON project.id = logs.project_id
+        GROUP BY 
+            project.id;
+    `
+
+    db.all(query, [], (err, rows) => {
+        if (err) {
+            console.log(err.message);
+            res.status(500).json({error: 'Internal Server Error'});
+        } else {
+            console.log(rows);
             res.json(rows);
         }
     });
