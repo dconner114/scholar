@@ -1,16 +1,27 @@
-function showTab(tabId) {
-    const tabContents = document.querySelectorAll('.tab-content');
-    tabContents.forEach(tab => {
-        tab.classList.remove('active');
-    });
 
-    const selectedTab = document.getElementById(tabId);
-    if (selectedTab) {
-        selectedTab.classList.add('active');
-    }
-}
 
 document.addEventListener('DOMContentLoaded', function () {
+
+    const ctx = document.getElementById('historyChart');
+
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+          datasets: [{
+            label: '# of Votes',
+            data: [12, 19, 3, 5, 2, 3],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+    });
 
     let modalVisibility = false;
 
@@ -81,6 +92,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     loadProjectData()
+
 
     function displayModal() {
         if (entryForm) {

@@ -1,15 +1,53 @@
 
-.tab-content {
-    display: none;
+html {
+    font-family: sans-serif;
 }
 
+body {
+    margin: 5vw 20vw 5vh 20vh;
+    background-color: #546E7A;
+    color: #CFD8DC;
+}
+
+button {
+    border-radius: 25px;
+    border-style: none;
+    background-color: #CFD8DC;
+    text-align: center; 
+    padding: 5px 10px;
+}
 .active {
     display: block;
 }
 
-.nav-button {
-    cursor: pointer;
+.grid-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: auto auto;
+    grid-gap: 10px;
+    justify-content: center;
+    align-items: center;
 }
+
+.grid-item {
+    border-radius: 20px;
+    background-color: #78909C;
+    color: #37474F;
+    padding: 30px;
+    text-align: center;
+    justify-content: center;
+    height: 30vh;
+    overflow: hidden;
+}
+
+.span-2 {
+    grid-column: span 2;
+}
+
+.span-3 {
+    grid-column: span 3;
+}
+
 
 /* Styles for the overlay */
 .overlay {
@@ -44,7 +82,8 @@
     left: 50%;
     transform: translate(-50%, -50%);
     background-color: #fff; /* Set your desired background color */
-    padding: 20px;
+    padding: 40px;
+    border-radius: 20px;
     z-index: 2; /* Place the modal above the overlay */
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Optional: Add a box shadow for depth */
 }
