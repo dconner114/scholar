@@ -13,6 +13,7 @@
     <div class="grid-container">
         
         <div id="history" class="grid-item span-2">
+            <h2>Summary</h2>
             <canvas id="historyChart"></canvas>
         </div>
 
@@ -39,40 +40,16 @@
                     <!-- entries inserted when page loads -->
                 </tbody>
             </table>
-            <div class="overlay" id="overlay"></div>
-                <div id="entryModal" class="modal-content">
-                    <div class="modal-content">
-                        <form id="entryForm">
-                            <label for="course">Course</label>
-                            <select type="text" id="course" name="course"></select> <!-- js populates options-->
-                            <!-- <button onclick="newCourse(event)">+Course</button>  new popup for adding courses -->
-                            <label for="project">Project</label>
-                            <select type="text" id="project" name="project"></select>
-                            <!-- <button onclick="newProject(event)">+Project</button> -->
-                            <label for="date">Date</label>
-                            <input type="date" id="date" name="date" required>
-                            <label for="startTime">Start</label>
-                            <input type="time" id="startTime" name="startTime" required>
-                            <label for="endTime">EndTime</label>
-                            <input type="time" id="endTime" name="endTime" required>
-                            <label for="description">Description</label>
-                            <textarea id="description" name="description" required></textarea>
-                            <button type="button" id="close">Cancel</button>
-                            <button type="submit" name="submit">Submit</button>
-                        </form>
-                    </div>
-                </div>
         </div>
      
         <div id="courseManager" class="grid-item">
             <h2>Courses</h2>
             <p>a summary of your current courses</p>
-    
+            <button id="newCourseButton">Add Course</button>
             <table id="courseTable">
                 <thead>
                     <tr>
                         <th>Course</th>
-                        <th>Description</th>
                         <th>hours</th>
                     </tr>
                 </thead>
@@ -85,10 +62,65 @@
         <div id="projectManager" class="grid-item">
             <h2>Projects</h2>
             <p>a summary of your current projects</p>
+            <button id="newProjectButton">Add Project</button>
+            <table id="projectTable">
+                <thead>
+                    <tr>
+                        <th>Project</th>
+                        <th>hours</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- entries inserted when page loads -->
+                </tbody>
+            </table>
         </div>
     
     </div>
     
+    <div class="overlay" id="overlay" style="display: none;"></div>
+        <div id="entryModal" class="modal-content">
+            <div class="modal-content">
+                <form id="entryForm">
+                    <label for="course">Course</label>
+                    <select type="text" id="course" name="course"></select> <!-- js populates options-->
+                    <!-- <button onclick="newCourse(event)">+Course</button>  new popup for adding courses -->
+                    <label for="project">Project</label>
+                    <select type="text" id="project" name="project"></select>
+                    <!-- <button onclick="newProject(event)">+Project</button> -->
+                    <label for="date">Date</label>
+                    <input type="date" id="date" name="date" required>
+                    <label for="startTime">Start</label>
+                    <input type="time" id="startTime" name="startTime" required>
+                    <label for="endTime">EndTime</label>
+                    <input type="time" id="endTime" name="endTime" required>
+                    <label for="description">Description</label>
+                    <textarea id="description" name="description" required></textarea>
+                    <button type="button" id="close">Cancel</button>
+                    <button type="submit" name="submit">Submit</button>
+                </form>
+            </div>
+        </div>
+        <div id="courseModal" class="modal-content">
+            <form id="courseForm">
+                <label for="course">Course</label>
+                <input type="text" id="course" name="course">
+                <label for="description">Description</label>
+                <textarea id="description" name="description"></textarea>
+                <button type="button" id="close">Cancel</button>
+                <button type="submit" name="submit">Submit</button>
+            </form>
+        </div>
+        <div id="projectModal" class="modal-content">
+            <form id="projectForm">
+                <label for="project">Project</label>
+                <input type="text" id="project" name="project">
+                <label for="description">Description</label>
+                <textarea id="description" name="description"></textarea>
+                <button type="button" id="close">Cancel</button>
+                <button type="submit" name="submit">Submit</button>
+            </form>
+        </div>
 
     <script src="./scripts/script.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

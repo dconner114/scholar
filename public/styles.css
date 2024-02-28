@@ -5,17 +5,29 @@ html {
 
 body {
     margin: 5vw 20vw 5vh 20vh;
-    background-color: #546E7A;
-    color: #CFD8DC;
+    background-color:#AE8789;
+    color: #FFDADB;
 }
 
 button {
     border-radius: 25px;
     border-style: none;
-    background-color: #CFD8DC;
+    color: #FFDADB;
+    background-color:#610E20;
     text-align: center; 
     padding: 5px 10px;
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
 }
+
+button:hover {
+    background-color: #AE8789;
+    color: #610E20;
+    -webkit-transform: translateY(-1px);
+	transform: translateY(-2px); /* Move the button up by 2 pixels on hover */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add a subtle shadow on hover */
+}
+
 .active {
     display: block;
 }
@@ -31,13 +43,12 @@ button {
 
 .grid-item {
     border-radius: 20px;
-    background-color: #78909C;
-    color: #37474F;
+    background-color: #FFDADB;
+    color: #610E20;
     padding: 30px;
     text-align: center;
     justify-content: center;
     height: 30vh;
-    overflow: hidden;
 }
 
 .span-2 {
@@ -81,7 +92,8 @@ button {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: #fff; /* Set your desired background color */
+    background-color: #FFDADB; /* Set your desired background color */
+    color: #610E20;
     padding: 40px;
     border-radius: 20px;
     z-index: 2; /* Place the modal above the overlay */

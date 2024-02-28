@@ -37,7 +37,7 @@ function elapsedTime (startTime, endTime) {
 }
 
 app.post('/', (req, res) => {
-    console.log("trying to post");
+    console.log("trying to post an entry");
     try {
         console.log(req.body);
         let { course, project, date, startTime, endTime, description } = req.body;
@@ -53,7 +53,6 @@ app.post('/', (req, res) => {
                         reject('Internal Server Error');
                     } else {
                         course_id = row ? row.id : null;
-                        console.log('Retrieved course_id:', course_id);
                         resolve();
                     }
                 });
@@ -67,7 +66,6 @@ app.post('/', (req, res) => {
                         reject('Internal Server Error');
                     } else {
                         project_id = row ? row.id : null;
-                        console.log('Retrieved project_id:', project_id);
                         resolve();
                     }
                 });
@@ -114,6 +112,7 @@ app.get('/api/logs', (req, res) => {
         LEFT JOIN course ON logs.course_id = course.id
         LEFT JOIN project ON logs.project_id = project.id
         ORDER BY date DESC
+        LIMIT 12;
     `;
 
     db.all(query, [], (err, rows) => {
@@ -125,6 +124,66 @@ app.get('/api/logs', (req, res) => {
         }
     });
 });
+
+app.get('/api/history', (req, res) => {
+    let currentDate = new Date();
+    console.log(currentDate);
+
+    let year = String(currentDate.getFullYear());
+    let month = (String(currentDate.getMonth() + 1)).length > 1 ? String(currentDate.getMonth() + 1) : ('0' + String(currentDate.getMonth() + 1));
+    let day = (String(currentDate.getDate() + 1)).length > 1 ? String(currentDate.getDate()) : ('0' + String(currentDate.getDate()));;
+
+    let pastDates = [];
+    
+    for(let i = 6; i >= 0; i--) {
+        let temp = new Date(currentDate)
+        temp.setDate(currentDate.getDate() - i)
+        pastDates.push(temp);
+    }
+
+    const intDates = pastDates.map(item => {
+        let year = String(item.getFullYear());
+        let month = (String(item.getMonth() + 1)).padStart(2, '0');
+        let day = (String(item.getDate())).padStart(2, '0');
+        
+        return parseInt(year + month + day, 10);
+    })
+
+    console.log(intDates);
+
+    const query = `
+        SELECT 
+            date,
+            SUM(total_time) AS total_time
+        FROM 
+            logs
+        WHERE 
+            date BETWEEN ${intDates[0]} AND ${intDates[intDates.length - 1]}
+        GROUP BY 
+            date
+        ORDER BY 
+            date DESC;
+    `;
+
+    db.all(query, [], (err, rows) => {
+        if (err) {
+            console.error(err.message);
+            res.status(500).json({ error: 'Internal Server Error' });
+        } else {
+            const serverResponseMap = new Map(rows.map(item => [item.date, item]));
+            const result = intDates.map(date => {
+                if (serverResponseMap.has(date)) {
+                  return serverResponseMap.get(date); // Do nothing, return the existing object
+                } else {
+                  return { date, total_time: 0 }; // Add a new object with total_time: 0
+                }
+              });
+            console.log(result);
+            res.json(result);
+        }
+    });
+    
+})
 
 app.get('/api/courses', (req,res) => {
     const query = `
@@ -146,11 +205,41 @@ app.get('/api/courses', (req,res) => {
             console.log(err.message);
             res.status(500).json({error: 'Internal Server Error'});
         } else {
-            console.log(rows);
             res.json(rows);
         }
     });
 });
+
+app.post('/api/courses', (req, res) =>{
+    console.log("trying to post a course");
+    try {
+        console.log(req.body);
+        let { course, description } = req.body;
+
+        course = course.toUpperCase();
+
+        const mainFunction = async () => {    
+            const insertQuery = `
+                INSERT INTO course (course_name, description)
+                VALUES ('${course}','${description}');
+            `;
+            console.log(insertQuery)
+            db.run(insertQuery);
+        };
+    
+        // Call the async function
+        mainFunction();
+
+        res.status(201).json({success: true, message: "Your entry has been successfully added"});
+
+
+        // add validation here
+
+    } catch (error) {
+        console.error(error);
+        res.status(400).json({error: 'Bad Request' });
+    }
+})
 
 app.get('/api/projects', (req,res) => {
     const query = `
@@ -172,12 +261,39 @@ app.get('/api/projects', (req,res) => {
             console.log(err.message);
             res.status(500).json({error: 'Internal Server Error'});
         } else {
-            console.log(rows);
             res.json(rows);
         }
     });
 });
 
+app.post('/api/projects', (req, res) => {
+    console.log("trying to post a project");
+    try {
+        console.log(req.body);
+        let { project, description } = req.body;
+
+        const mainFunction = async () => {    
+            const insertQuery = `
+                INSERT INTO project (project_name, description)
+                VALUES ('${project}','${description}');
+            `;
+            console.log(insertQuery)
+            // db.run(insertQuery);
+        };
+    
+        // Call the async function
+        mainFunction();
+
+        res.status(201).json({success: true, message: "Your entry has been successfully added"});
+
+
+        // add validation here
+
+    } catch (error) {
+        console.error(error);
+        res.status(400).json({error: 'Bad Request' });
+    }
+})
 
 app.get('/api/options', (req, res) => {
     const courseQuery = `

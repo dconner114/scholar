@@ -2,28 +2,40 @@
 
 document.addEventListener('DOMContentLoaded', function () {
 
-    const ctx = document.getElementById('historyChart');
+    function loadChartData() {
+        fetch('/api/history') 
+            .then(response => response.json())
+            .then(data => {
+                const ctx = document.getElementById('historyChart');
+                
+                dateLabels = data.map(item => {
+                    const dateString = String(item.date);
+                    return `${dateString.substring(4, 6)}/${dateString.substring(6, 8)}`;
+                })
 
-    new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-          datasets: [{
-            label: '# of Votes',
-            data: [12, 19, 3, 5, 2, 3],
-            borderWidth: 1
-          }]
-        },
-        options: {
-          scales: {
-            y: {
-              beginAtZero: true
-            }
-          }
-        }
-    });
-
-    let modalVisibility = false;
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                    labels: dateLabels,
+                    datasets: [{
+                        label: 'minutes',
+                        data: data.map(item => item.total_time),
+                        borderWidth: 1
+                    }]
+                    },
+                    options: {
+                    scales: {
+                        y: {
+                        beginAtZero: true
+                        }
+                    }
+                    }
+                });
+            })
+            .catch(error => console.error('Error fetching chart data:', error));
+    }
+    // call function to load chart data
+    loadChartData()
 
     // Function to fetch and display logs data
     function loadLogsData() {
@@ -46,14 +58,13 @@ document.addEventListener('DOMContentLoaded', function () {
                         <td>${row.start_time}</td>
                         <td>${row.end_time}</td>
                         <td>${row.description || ''}</td>
-                        <td>${row.total_time}</td>
+                        <td>${formatTime(row.total_time)}</td>
                     </tr>`;
                     table.querySelector('tbody').insertAdjacentHTML('beforeend', newRow);
                 });
             })
             .catch(error => console.error('Error fetching data:', error));
     }
-
     // Call the function when the page loads
     loadLogsData();
 
@@ -63,13 +74,28 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(response => response.json())
             .then(data => {
                 const table = document.getElementById('courseTable');
-
                 table.querySelector('tbody').innerHTML = '';
-
                 data.forEach(row => {
                     const newRow = `<tr>
                     <td>${row.course_name}</td>
-                    <td>${row.description || ''}</td>
+                    <td>${formatTime(row.total_time)}</td>
+                    <tr>`
+                    table.querySelector('tbody').insertAdjacentHTML('beforeend', newRow);
+                })
+            })
+            .catch(error => console.error('Error fetching data:', error));
+    }
+    loadCourseData()
+
+    function loadProjectData() {
+        fetch('/api/projects')
+            .then(response => response.json())
+            .then(data => {
+                const table = document.getElementById('projectTable');
+                table.querySelector('tbody').innerHTML = '';
+                data.forEach(row => {
+                    const newRow = `<tr>
+                    <td>${row.project_name}</td>
                     <td>${formatTime(row.total_time)}</td>
                     <tr>`
                     table.querySelector('tbody').insertAdjacentHTML('beforeend', newRow);
@@ -78,23 +104,10 @@ document.addEventListener('DOMContentLoaded', function () {
             .catch(error => console.error('Error fetching data:', error));
     }
 
-    loadCourseData()
-
-    function loadProjectData() {
-        fetch('/api/projects')
-            .then(response => response.json())
-            .then(data => {
-                data.forEach(row => {
-
-                })
-            })
-            .catch(error => console.error('Error fetching data:', error));
-    }
-
     loadProjectData()
 
 
-    function displayModal() {
+    function displayEntryModal() {
         if (entryForm) {
             entryForm.reset();
         }
@@ -138,12 +151,37 @@ document.addEventListener('DOMContentLoaded', function () {
         .catch(error => console.error('Error fetching options:', error));
 
         // Display the overlay and modal
+        hideModals();
         entryModal.style.display = "block";
         overlay.style.display = "block";
     }
 
-    function hideModal() {
+    function displayCourseModal() {
+        if (courseForm) {
+            courseForm.reset();
+        }
+
+        // Display the overlay and modal
+        hideModals();
+        courseModal.style.display = "block";
+        overlay.style.display = "block";
+    }
+
+    function displayProjectModal() {
+        if (projectForm) {
+            projectForm.reset();
+        }
+
+        // Display the overlay and modal
+        hideModals();
+        projectModal.style.display = "block";
+        overlay.style.display = "block";
+    }
+
+    function hideModals() {
         entryModal.style.display = "none";
+        courseModal.style.display = "none";
+        projectModal.style.display = "none";
         overlay.style.display = "none";
         modalVisibility = false;
     }
@@ -154,23 +192,34 @@ document.addEventListener('DOMContentLoaded', function () {
     // Function to handle the escape key press and add entry shortcuts
     function handleEscapeKey(event) {
         if (event.key === "Escape") {
-            hideModal();
-        } else if ((event.key === 'a' || event.key ==='A') && !modalVisibility) {
-            displayModal();
+            hideModals()
         }
+        // } else if ((event.key === 'a' || event.key ==='A') && !modalVisibility) {
+        //     displayEntryModal();
+        // }
     }
 
     // Add listener for entry modal functionality
     const entryButton = document.getElementById("newEntryButton");
-    const closeButton = document.getElementById("close");
+    const courseButton = document.getElementById("newCourseButton");
+    const projectButton = document.getElementById("newProjectButton");
     const entryModal = document.getElementById("entryModal");
-    entryModal.style.display = "none";
+    const courseModal = document.getElementById("courseModal");
     const overlay = document.getElementById("overlay");
+    hideModals();
+    
+    const closeButtons = document.querySelectorAll('#close');
+
+    closeButtons.forEach(button => {
+        button.addEventListener('click', hideModals);
+    });
+
 
     if (entryButton && entryModal) {
         entryModal.style.display = "none";
-        entryButton.addEventListener("click", displayModal);
-        closeButton.addEventListener("click", hideModal);
+        entryButton.addEventListener("click", displayEntryModal);
+        courseButton.addEventListener("click", displayCourseModal);
+        projectButton.addEventListener("click", displayProjectModal);
     }
 
     function formatTime(minutes) {
@@ -196,17 +245,9 @@ document.addEventListener('DOMContentLoaded', function () {
         return `${month}-${day}-${year}`;
     }
 
-    function newCourse(event) {
-        event.preventDefault();
-        return;
-    }
-    
-    function newProject(event) {
-        event.preventDefault();
-        return;
-    }
+    entryForm = document.getElementById('entryForm');
 
-    document.getElementById('entryForm').addEventListener('submit', function (event) {
+    entryForm.addEventListener('submit', function (event) {
         event.preventDefault();
     
         // Serialize the form data
@@ -229,7 +270,7 @@ document.addEventListener('DOMContentLoaded', function () {
         .then(response => response.json())
         .then(data => {
 
-            hideModal();
+            hideModals();
             // Reload the page after displaying the alert
             location.reload();
 
@@ -240,6 +281,87 @@ document.addEventListener('DOMContentLoaded', function () {
             // Handle errors if needed
             console.error('Error submitting form', error);
             alert('Error submitting form');
+        });
+    });
+
+    courseForm = document.getElementById('courseForm');
+    
+    courseForm.addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        var formData = new FormData(this);
+
+        var formDataObject = {};
+        formData.forEach(function(value, key){
+            formDataObject[key] = value;
+        });
+        fetch('/api/courses', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formDataObject)
+        })
+        .then(response => response.json())
+        .then(data => {
+
+            hideModals();
+            // Reload the page after displaying the alert
+            location.reload();
+
+            // Display a success message on the index page
+            alert(data.message);
+        })
+        .catch(error => {
+            // Handle errors if needed
+            console.error('Error submitting form', error);
+            alert('Error submitting form');
+        });    
+    })
+
+    projectForm = document.getElementById('projectForm');
+
+    projectForm.addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        var formData = new FormData(this);
+
+        var formDataObject = {};
+        formData.forEach(function(value, key){
+            formDataObject[key] = value;
+        });
+        fetch('/api/projects', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formDataObject)
+        })
+        .then(response => response.json())
+        .then(data => {
+
+            hideModals();
+            // Reload the page after displaying the alert
+            location.reload();
+
+            // Display a success message on the index page
+            alert(data.message);
+        })
+        .catch(error => {
+            // Handle errors if needed
+            console.error('Error submitting form', error);
+            alert('Error submitting form');
+        });    
+    })
+
+    const buttons = document.querySelectorAll('button');
+    buttons.forEach(button => {
+        button.addEventListener('mousedown', () => {
+            button.style.transform = 'translateY(0)';
+        });
+
+        button.addEventListener('mouseup', () => {
+            button.style.transform = '';
         });
     });
 });
