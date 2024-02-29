@@ -8,8 +8,10 @@
 </head>
 
 <body>
+    <script src="./scripts/script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <h1>Scholar</h1>
-    
+
     <div class="grid-container">
         
         <div id="history" class="grid-item span-2">
@@ -19,7 +21,12 @@
 
         <div id="timer" class="grid-item">
             <h1>Pomodoro Timer</h1>
-            <h1>00:00</h1>
+            <h1 id="display">00:00</h1>
+            <button onclick="startTimer()">Start</button>
+            <button onclick="clearTimer()">Clear</button>
+            <button onclick="setPomodoroTime()">Pomodoro</button>
+            <button onclick="addShortBreak()">Short Break</button>
+            <button onclick="addLongBreak()">Long Break</button>
         </div>
     
         <div id="logData" class="grid-item span-3">
@@ -125,8 +132,7 @@
             <button id="confirm">Confirm</button>
         </div>
 
-    <script src="./scripts/script.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
 </body>
 
 </html>
