@@ -125,9 +125,20 @@ app.get('/api/logs', (req, res) => {
     });
 });
 
+app.delete('/api/logs/:id', (req, res) => {
+    console.log("trying to delete a project");
+    const entryId = req.params.id;
+    
+    const query = `
+        DELETE FROM logs
+        WHERE id = ${entryId};`
+    db.run(query)
+
+    res.json({ message: `Entry with ID ${entryId} deleted successfully` });
+})
+
 app.get('/api/history', (req, res) => {
     let currentDate = new Date();
-    console.log(currentDate);
 
     let year = String(currentDate.getFullYear());
     let month = (String(currentDate.getMonth() + 1)).length > 1 ? String(currentDate.getMonth() + 1) : ('0' + String(currentDate.getMonth() + 1));
@@ -148,8 +159,6 @@ app.get('/api/history', (req, res) => {
         
         return parseInt(year + month + day, 10);
     })
-
-    console.log(intDates);
 
     const query = `
         SELECT 
@@ -178,7 +187,6 @@ app.get('/api/history', (req, res) => {
                   return { date, total_time: 0 }; // Add a new object with total_time: 0
                 }
               });
-            console.log(result);
             res.json(result);
         }
     });
@@ -213,7 +221,7 @@ app.get('/api/courses', (req,res) => {
 app.post('/api/courses', (req, res) =>{
     console.log("trying to post a course");
     try {
-        console.log(req.body);
+        
         let { course, description } = req.body;
 
         course = course.toUpperCase();
@@ -223,7 +231,7 @@ app.post('/api/courses', (req, res) =>{
                 INSERT INTO course (course_name, description)
                 VALUES ('${course}','${description}');
             `;
-            console.log(insertQuery)
+            
             db.run(insertQuery);
         };
     
@@ -239,6 +247,18 @@ app.post('/api/courses', (req, res) =>{
         console.error(error);
         res.status(400).json({error: 'Bad Request' });
     }
+})
+
+app.delete('/api/courses/:id', (req, res) => {
+    console.log("trying to delete a course");
+    const courseId = req.params.id;
+    
+    const query = `
+        DELETE FROM course
+        WHERE id = ${courseId};`
+    db.run(query)
+
+    res.json({ message: `Course with ID ${courseId} deleted successfully` });
 })
 
 app.get('/api/projects', (req,res) => {
@@ -269,7 +289,7 @@ app.get('/api/projects', (req,res) => {
 app.post('/api/projects', (req, res) => {
     console.log("trying to post a project");
     try {
-        console.log(req.body);
+        
         let { project, description } = req.body;
 
         const mainFunction = async () => {    
@@ -277,8 +297,8 @@ app.post('/api/projects', (req, res) => {
                 INSERT INTO project (project_name, description)
                 VALUES ('${project}','${description}');
             `;
-            console.log(insertQuery)
-            // db.run(insertQuery);
+            
+            db.run(insertQuery);
         };
     
         // Call the async function
@@ -293,6 +313,18 @@ app.post('/api/projects', (req, res) => {
         console.error(error);
         res.status(400).json({error: 'Bad Request' });
     }
+})
+
+app.delete('/api/projects/:id', (req, res) => {
+    console.log("trying to delete a project");
+    const projectId = req.params.id;
+    
+    const query = `
+        DELETE FROM project
+        WHERE id = ${projectId};`
+    db.run(query)
+
+    res.json({ message: `Project with ID ${projectId} deleted successfully` });
 })
 
 app.get('/api/options', (req, res) => {

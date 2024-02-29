@@ -13,16 +13,17 @@
     <div class="grid-container">
         
         <div id="history" class="grid-item span-2">
-            <h2>Summary</h2>
+            <h1>Summary</h1>
             <canvas id="historyChart"></canvas>
         </div>
 
         <div id="timer" class="grid-item">
-            <h2>00:00</h2>
+            <h1>Pomodoro Timer</h1>
+            <h1>00:00</h1>
         </div>
     
         <div id="logData" class="grid-item span-3">
-            <h2>My Sessions</h2>
+            <h1>My Sessions</h1>
             <button id="newEntryButton">Add entry</button>      
             <table id="logsTable">
                 <thead>
@@ -43,8 +44,7 @@
         </div>
      
         <div id="courseManager" class="grid-item">
-            <h2>Courses</h2>
-            <p>a summary of your current courses</p>
+            <h1>Courses</h1>
             <button id="newCourseButton">Add Course</button>
             <table id="courseTable">
                 <thead>
@@ -60,8 +60,7 @@
         </div>
     
         <div id="projectManager" class="grid-item">
-            <h2>Projects</h2>
-            <p>a summary of your current projects</p>
+            <h1>Projects</h1>
             <button id="newProjectButton">Add Project</button>
             <table id="projectTable">
                 <thead>
@@ -84,15 +83,13 @@
                 <form id="entryForm">
                     <label for="course">Course</label>
                     <select type="text" id="course" name="course"></select> <!-- js populates options-->
-                    <!-- <button onclick="newCourse(event)">+Course</button>  new popup for adding courses -->
                     <label for="project">Project</label>
                     <select type="text" id="project" name="project"></select>
-                    <!-- <button onclick="newProject(event)">+Project</button> -->
                     <label for="date">Date</label>
                     <input type="date" id="date" name="date" required>
                     <label for="startTime">Start</label>
                     <input type="time" id="startTime" name="startTime" required>
-                    <label for="endTime">EndTime</label>
+                    <label for="endTime">End</label>
                     <input type="time" id="endTime" name="endTime" required>
                     <label for="description">Description</label>
                     <textarea id="description" name="description" required></textarea>
@@ -120,6 +117,12 @@
                 <button type="button" id="close">Cancel</button>
                 <button type="submit" name="submit">Submit</button>
             </form>
+        </div>
+        <div id="confirmationModal" class="modal-content">
+            <h2>Are you sure?</h2>
+            <p>This will delete all entries related to the project or course</p>
+            <button id="close">Cancel</button>
+            <button id="confirm">Confirm</button>
         </div>
 
     <script src="./scripts/script.js"></script>

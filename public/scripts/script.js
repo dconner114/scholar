@@ -34,7 +34,6 @@ document.addEventListener('DOMContentLoaded', function () {
             })
             .catch(error => console.error('Error fetching chart data:', error));
     }
-    // call function to load chart data
     loadChartData()
 
     // Function to fetch and display logs data
@@ -51,24 +50,26 @@ document.addEventListener('DOMContentLoaded', function () {
                 data.forEach(row => {
                     const formattedDate = formatDate(row.date);
 
-                    const newRow = `<tr>
-                        <td>${row.course_name || ''}</td>
+                    const newRow = `<tr class="entry" id=${row.id}>
+                        <td class="left">${row.course_name || ''}</td>
                         <td>${row.project_name || ''}</td>
                         <td>${formattedDate}</td>
                         <td>${row.start_time}</td>
                         <td>${row.end_time}</td>
                         <td>${row.description || ''}</td>
                         <td>${formatTime(row.total_time)}</td>
+                        <td class="right">
+                            <button class="delete-btn" data-entry-id="${row.id}">Del</button>
+                            <button class="edit-btn" data-entry-id="${row.id}">Edit</button>
+                        </td>
                     </tr>`;
                     table.querySelector('tbody').insertAdjacentHTML('beforeend', newRow);
                 });
             })
             .catch(error => console.error('Error fetching data:', error));
     }
-    // Call the function when the page loads
     loadLogsData();
 
-    // function to load 
     function loadCourseData() {
         fetch('/api/courses')
             .then(response => response.json())
@@ -76,10 +77,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 const table = document.getElementById('courseTable');
                 table.querySelector('tbody').innerHTML = '';
                 data.forEach(row => {
-                    const newRow = `<tr>
-                    <td>${row.course_name}</td>
+                    const newRow = `<tr class="entry">
+                    <td class="left">${row.course_name}</td>
                     <td>${formatTime(row.total_time)}</td>
-                    <tr>`
+                    <td class="right">
+                            <button class="delete-btn course-btn" id="confirm-req" data-entry-id="${row.id}">Del</button>
+                            <button class="edit-btn course-btn" data-entry-id="${row.id}">Edit</button>
+                        </td>
+                    </tr>`
                     table.querySelector('tbody').insertAdjacentHTML('beforeend', newRow);
                 })
             })
@@ -88,24 +93,27 @@ document.addEventListener('DOMContentLoaded', function () {
     loadCourseData()
 
     function loadProjectData() {
+        
         fetch('/api/projects')
             .then(response => response.json())
             .then(data => {
                 const table = document.getElementById('projectTable');
                 table.querySelector('tbody').innerHTML = '';
                 data.forEach(row => {
-                    const newRow = `<tr>
-                    <td>${row.project_name}</td>
+                    const newRow = `<tr class="entry">
+                    <td class="left">${row.project_name}</td>
                     <td>${formatTime(row.total_time)}</td>
+                    <td class="right">
+                            <button class="delete-btn project-btn" id="confirm-req" data-entry-id="${row.id}">Del</button>
+                            <button class="edit-btn project-btn" data-entry-id="${row.id}">Edit</button>
+                        </td>
                     <tr>`
                     table.querySelector('tbody').insertAdjacentHTML('beforeend', newRow);
                 })
             })
             .catch(error => console.error('Error fetching data:', error));
     }
-
     loadProjectData()
-
 
     function displayEntryModal() {
         if (entryForm) {
@@ -178,12 +186,15 @@ document.addEventListener('DOMContentLoaded', function () {
         overlay.style.display = "block";
     }
 
+    function displayConfirmationModal() {
+        confirmationModal.style.display = "block";
+        overlay.style.display = "block";
+    }
+
     function hideModals() {
-        entryModal.style.display = "none";
-        courseModal.style.display = "none";
-        projectModal.style.display = "none";
-        overlay.style.display = "none";
-        modalVisibility = false;
+        modalElements.forEach(modal => {
+            modal.style.display = "none";
+        })
     }
 
     // Add event listener for the escape key
@@ -199,29 +210,40 @@ document.addEventListener('DOMContentLoaded', function () {
         // }
     }
 
+    function confirmDelete(button) {
+        displayConfirmationModal()
+    }
+
     // Add listener for entry modal functionality
     const entryButton = document.getElementById("newEntryButton");
     const courseButton = document.getElementById("newCourseButton");
     const projectButton = document.getElementById("newProjectButton");
+
     const entryModal = document.getElementById("entryModal");
     const courseModal = document.getElementById("courseModal");
+    const projectModal = document.getElementById("projectModal");
+    const confirmationModal = document.getElementById("confirmationModal");
     const overlay = document.getElementById("overlay");
+
+    modalElements = [
+        entryModal,
+        courseModal,
+        projectModal,
+        confirmationModal,
+        overlay,
+    ]
     hideModals();
     
     const closeButtons = document.querySelectorAll('#close');
-
     closeButtons.forEach(button => {
         button.addEventListener('click', hideModals);
     });
 
+    entryButton.addEventListener("click", displayEntryModal);
+    courseButton.addEventListener("click", displayCourseModal);
+    projectButton.addEventListener("click", displayProjectModal);
 
-    if (entryButton && entryModal) {
-        entryModal.style.display = "none";
-        entryButton.addEventListener("click", displayEntryModal);
-        courseButton.addEventListener("click", displayCourseModal);
-        projectButton.addEventListener("click", displayProjectModal);
-    }
-
+    // Display time in HhrMM format
     function formatTime(minutes) {
         if (typeof minutes !== 'number' || isNaN(minutes)) {
             return 'Invalid input';
@@ -246,7 +268,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     entryForm = document.getElementById('entryForm');
-
     entryForm.addEventListener('submit', function (event) {
         event.preventDefault();
     
@@ -285,7 +306,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     courseForm = document.getElementById('courseForm');
-    
     courseForm.addEventListener('submit', function (event) {
         event.preventDefault();
 
@@ -320,7 +340,6 @@ document.addEventListener('DOMContentLoaded', function () {
     })
 
     projectForm = document.getElementById('projectForm');
-
     projectForm.addEventListener('submit', function (event) {
         event.preventDefault();
 
@@ -354,6 +373,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });    
     })
 
+    // button styling script
     const buttons = document.querySelectorAll('button');
     buttons.forEach(button => {
         button.addEventListener('mousedown', () => {
@@ -363,5 +383,68 @@ document.addEventListener('DOMContentLoaded', function () {
         button.addEventListener('mouseup', () => {
             button.style.transform = '';
         });
+    });
+
+    document.body.addEventListener('click', function (event) {
+        const target = event.target;
+
+        // Check if the clicked element is a delete button with id "confirm-req"
+        if (target.classList.contains('delete-btn')) {
+            // Display the confirmation modal when the delete button is clicked
+            displayConfirmationModal();
+
+            // Add a click event listener to the confirm button in the confirmation modal
+            const confirmButton = document.getElementById('confirm');
+            confirmButton.addEventListener('click', function() {
+                // Get the entry ID from the data-entry-id attribute
+                const entryId = target.getAttribute('data-entry-id');
+
+                if (target.classList.contains('course-btn')) {
+                    // Send a request to the server to delete the item with the specified ID
+                    fetch(`/api/courses/${entryId}`, {
+                        method: 'DELETE',
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        // Handle the server response if needed
+                        console.log(data);
+                        location.reload();
+                    })
+                    .catch(error => {
+                        console.error('Error deleting item:', error);
+                    });
+                } else if (target.classList.contains('project-btn')) {
+                    // Send a request to the server to delete the item with the specified ID
+                    fetch(`/api/projects/${entryId}`, {
+                        method: 'DELETE',
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        // Handle the server response if needed
+                        console.log(data);
+                        location.reload();
+                    })
+                    .catch(error => {
+                        console.error('Error deleting item:', error);
+                    });
+                } else {
+                    fetch(`/api/logs/${entryId}`, {
+                        method: 'DELETE',
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        // Handle the server response if needed
+                        console.log(data);
+                        location.reload();
+                    })
+                    .catch(error => {
+                        console.error('Error deleting item:', error);
+                    });
+                }
+                    
+                // Hide the confirmation modal after deletion
+                hideModals();
+            });
+        } 
     });
 });
