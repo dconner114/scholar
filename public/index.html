@@ -8,9 +8,13 @@
 </head>
 
 <body>
-    <script src="./scripts/script.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
     <h1>Scholar</h1>
+
+    <div class="notification-bar">
+        <p>This is a notification</p>
+        <button class="close-notification-button">X</button>
+    </div>
 
     <div class="grid-container">
         
@@ -85,54 +89,55 @@
     </div>
     
     <div class="overlay" id="overlay" style="display: none;"></div>
-        <div id="entryModal" class="modal-content">
-            <div class="modal-content">
-                <form id="entryForm">
-                    <label for="course">Course</label>
-                    <select type="text" id="course" name="course"></select> <!-- js populates options-->
-                    <label for="project">Project</label>
-                    <select type="text" id="project" name="project"></select>
-                    <label for="date">Date</label>
-                    <input type="date" id="date" name="date" required>
-                    <label for="startTime">Start</label>
-                    <input type="time" id="startTime" name="startTime" required>
-                    <label for="endTime">End</label>
-                    <input type="time" id="endTime" name="endTime" required>
-                    <label for="description">Description</label>
-                    <textarea id="description" name="description" required></textarea>
-                    <button type="button" id="close">Cancel</button>
-                    <button type="submit" name="submit">Submit</button>
-                </form>
-            </div>
-        </div>
-        <div id="courseModal" class="modal-content">
-            <form id="courseForm">
+    <div id="entryModal" class="modal-content">
+        <div class="modal-content">
+            <form id="entryForm">
                 <label for="course">Course</label>
-                <input type="text" id="course" name="course">
-                <label for="description">Description</label>
-                <textarea id="description" name="description"></textarea>
-                <button type="button" id="close">Cancel</button>
-                <button type="submit" name="submit">Submit</button>
-            </form>
-        </div>
-        <div id="projectModal" class="modal-content">
-            <form id="projectForm">
+                <select type="text" id="course" name="course"></select> <!-- js populates options-->
                 <label for="project">Project</label>
-                <input type="text" id="project" name="project">
+                <select type="text" id="project" name="project"></select>
+                <label for="date">Date</label>
+                <input type="date" id="date" name="date" required>
+                <label for="startTime">Start</label>
+                <input type="time" id="startTime" name="startTime" required>
+                <label for="endTime">End</label>
+                <input type="time" id="endTime" name="endTime" required>
                 <label for="description">Description</label>
-                <textarea id="description" name="description"></textarea>
+                <textarea id="description" name="description" required></textarea>
                 <button type="button" id="close">Cancel</button>
-                <button type="submit" name="submit">Submit</button>
+                <button type="submit" name="submit" id="entryFormSubmit">Submit</button>
             </form>
         </div>
-        <div id="confirmationModal" class="modal-content">
-            <h2>Are you sure?</h2>
-            <p>This will delete all entries related to the project or course</p>
-            <button id="close">Cancel</button>
-            <button id="confirm">Confirm</button>
-        </div>
-
-    
+    </div>
+    <div id="courseModal" class="modal-content">
+        <form id="courseForm">
+            <label for="course">Course</label>
+            <input type="text" id="course" name="course">
+            <label for="description">Description</label>
+            <textarea id="description" name="description"></textarea>
+            <button type="button" id="close">Cancel</button>
+            <button type="submit" name="submit">Submit</button>
+        </form>
+    </div>
+    <div id="projectModal" class="modal-content">
+        <form id="projectForm">
+            <label for="project">Project</label>
+            <input type="text" id="project" name="project">
+            <label for="description">Description</label>
+            <textarea id="description" name="description"></textarea>
+            <button type="button" id="close">Cancel</button>
+            <button type="submit" name="submit">Submit</button>
+        </form>
+    </div>
+    <div id="confirmationModal" class="modal-content">
+        <h2>Are you sure?</h2>
+        <p>This will delete all entries related to the project or course</p>
+        <button id="close">Cancel</button>
+        <button id="confirm">Confirm</button>
+    </div>
+    <script src="./scripts/script.js"></script>
+    <script src="./scripts/timer.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </body>
 
 </html>

@@ -1,62 +1,29 @@
-
-// Timer functionality
-let timer;
-let timeInSeconds = 0;
-
-function startTimer() {
-    if (!timer) {
-    timer = setInterval(updateTimer, 1000);
-    }
-}
-
-function clearTimer() {
-    clearInterval(timer);
-    timer = null;
-    timeInSeconds = 0;
-    updateDisplay();
-}
-
-function setPomodoroTime() {
-    timeInSeconds = 25 * 60;
-    updateDisplay();
-}
-
-function addShortBreak() {
-    timeInSeconds = 5 * 60;
-    updateDisplay();
-}
-
-function addLongBreak() {
-    timeInSeconds = 10 * 60;
-    updateDisplay();
-}
-
-function updateTimer() {
-    if (timeInSeconds > 0) {
-    timeInSeconds--;
-    updateDisplay();
-    } else {
-    clearInterval(timer);
-    timer = null;
-    alert('Timer ended. Take a break!');
-    setPomodoroTime(); // Reset to Pomodoro time after timer ends
-    }
-}
-
-function updateDisplay() {
-    const minutes = Math.floor(timeInSeconds / 60);
-    const seconds = timeInSeconds % 60;
-    document.getElementById('display').innerText = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-}
-
 document.addEventListener('DOMContentLoaded', function () {
 
+    const notificationBar = document.querySelector('.notification-bar');
+    notificationBar.style.display = 'none';
+    var notificationText = notificationBar.querySelector('p');
+    const notificationClose = document.querySelector('.close-notification-button')
+
+
+    notificationClose.addEventListener('click', () => notificationBar.style.display = 'none');
+
+    function displayNotification(success, message) {
+        notificationText.innerHTML = message;
+        if (success) {
+            notificationText.style.backgroundColor = '#00FF00';
+        } else {
+            notificationText.style.backgroundColor = '#FF0000';
+        }
+        notificationBar.style.display = 'block';
+
+    }
     function loadChartData() {
         fetch('/api/history') 
             .then(response => response.json())
             .then(data => {
-                const ctx = document.getElementById('historyChart');
                 
+                const ctx = document.getElementById('historyChart');
                 dateLabels = data.map(item => {
                     const dateString = String(item.date);
                     return `${dateString.substring(4, 6)}/${dateString.substring(6, 8)}`;
@@ -84,8 +51,6 @@ document.addEventListener('DOMContentLoaded', function () {
             .catch(error => console.error('Error fetching chart data:', error));
     }
     loadChartData()
-
-    
 
     // Function to fetch and display logs data
     function loadLogsData() {
@@ -144,7 +109,6 @@ document.addEventListener('DOMContentLoaded', function () {
     loadCourseData()
 
     function loadProjectData() {
-        
         fetch('/api/projects')
             .then(response => response.json())
             .then(data => {
@@ -166,16 +130,13 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     loadProjectData()
 
-    function displayEntryModal() {
-        if (entryForm) {
-            entryForm.reset();
-        }
-
+    function displayEntryModal(entryId) {
+        entryForm.reset();
         // Fetch data for populating select elements
         fetch('/api/options') // Replace with your actual API endpoint
-        .then(response => response.json())
-        .then(data => {
-            // Assuming you have 'course' and 'project' select elements
+            .then(response => response.json())
+            .then(data => {
+            
             const courseSelect = document.getElementById('course');
             const projectSelect = document.getElementById('project');
 
@@ -204,16 +165,43 @@ document.addEventListener('DOMContentLoaded', function () {
                 option.textContent = project; 
                 projectSelect.appendChild(option);
             });
+            if (entryId > -1) {
+                fetch(`/api/logs/${entryId}`)
+                    .then(response => response.json())
+                    .then(entryData => {
+                        // Assuming your server response provides data in the expected format
+                        data = entryData.data;
+                        entryForm.elements['course'].value = data.course_name;
+                        entryForm.elements['project'].value = data.project_name;
+                        entryForm.elements['date'].value = data.date;
+                        entryForm.elements['startTime'].value = data.start_time;
+                        entryForm.elements['endTime'].value = data.end_time;
+                        entryForm.elements['description'].value = data.description;
 
-            modalVisibility = true;
+                        entryFormSubmit.innerHTML = 'Save';
+                    })
+                    .catch(error => console.error('Error fetching entry data:', error));
+            } else {
+                entryFormSubmit.innerHTML = 'Submit';
+            }
+
         })
-        .catch(error => console.error('Error fetching options:', error));
+        .catch(error => console.error('Error fetching options:', error))
+        .finally(() => {
+            entryForm.removeEventListener('submit', createNewEntry);
+            entryForm.removeEventListener('submit', event => editEntry(event, entryId));
 
-        // Display the overlay and modal
-        hideModals();
-        entryModal.style.display = "block";
-        overlay.style.display = "block";
-    }
+            if (entryId > -1) {
+                entryForm.addEventListener('submit', event => editEntry(event, entryId));
+            } else {
+                entryForm.addEventListener('submit', createNewEntry);
+            }
+            // Display the overlay and modal
+            hideModals();
+            entryModal.style.display = "block";
+            overlay.style.display = "block";
+        });
+}
 
     function displayCourseModal() {
         if (courseForm) {
@@ -294,6 +282,8 @@ document.addEventListener('DOMContentLoaded', function () {
     courseButton.addEventListener("click", displayCourseModal);
     projectButton.addEventListener("click", displayProjectModal);
 
+    const entryFormSubmit = document.getElementById('entryFormSubmit');
+
     // Display time in HhrMM format
     function formatTime(minutes) {
         if (typeof minutes !== 'number' || isNaN(minutes)) {
@@ -319,15 +309,15 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     entryForm = document.getElementById('entryForm');
-    entryForm.addEventListener('submit', function (event) {
+    function createNewEntry(event) {
         event.preventDefault();
-    
+        console.log(new FormData(this))
         // Serialize the form data
         var formData = new FormData(this);
     
         // Convert FormData to an object
         var formDataObject = {};
-        formData.forEach(function(value, key){
+        formData.forEach(function (value, key) {
             formDataObject[key] = value;
         });
     
@@ -339,22 +329,50 @@ document.addEventListener('DOMContentLoaded', function () {
             },
             body: JSON.stringify(formDataObject)
         })
-        .then(response => response.json())
-        .then(data => {
-
-            hideModals();
-            // Reload the page after displaying the alert
-            location.reload();
-
-            // Display a success message on the index page
-            alert(data.message);
-        })
-        .catch(error => {
-            // Handle errors if needed
-            console.error('Error submitting form', error);
-            alert('Error submitting form');
+            .then(response => response.json())
+            .then(data => {
+                hideModals();
+                console.log(data.success, data.message);
+                loadLogsData();
+                displayNotification(data.success, data.message);
+            })
+            .catch(error => {
+                console.error('Error submitting form', error);
+                displayNotification(false, 'Error submitting form');
+            });
+    }
+    
+    function editEntry(event, entryId) {
+        event.preventDefault();
+        // Serialize the form data
+        var formData = new FormData(document.getElementById('entryForm'));
+    
+        // Convert FormData to an object
+        var formDataObject = {};
+        formData.forEach(function (value, key) {
+            formDataObject[key] = value;
         });
-    });
+    
+        // Send a standard form submission
+        fetch(`/api/logs/${entryId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formDataObject)
+        })
+            .then(response => response.json())
+            .then(data => {
+                hideModals();
+                console.log(data.success, data.message);
+                loadLogsData();
+                displayNotification(data.success, data.message);
+            })
+            .catch(error => {
+                console.error('Error submitting form', error);
+                displayNotification(false, 'Error submitting form');
+            });
+    }
 
     courseForm = document.getElementById('courseForm');
     courseForm.addEventListener('submit', function (event) {
@@ -378,15 +396,20 @@ document.addEventListener('DOMContentLoaded', function () {
 
             hideModals();
             // Reload the page after displaying the alert
-            location.reload();
+            // location.reload();
 
             // Display a success message on the index page
-            alert(data.message);
+            console.log(data.success, data.message);
+            loadCourseData();
+            // Display a success message on the index page
+            displayNotification(data.success, data.message)
         })
         .catch(error => {
             // Handle errors if needed
             console.error('Error submitting form', error);
-            alert('Error submitting form');
+            console.log(data.success, data.message);
+            // Display a success message on the index page
+            displayNotification(data.success, data.message)
         });    
     })
 
@@ -412,15 +435,20 @@ document.addEventListener('DOMContentLoaded', function () {
 
             hideModals();
             // Reload the page after displaying the alert
-            location.reload();
+            // location.reload();
 
             // Display a success message on the index page
-            alert(data.message);
+            console.log(data.success, data.message);
+            loadProjectData();
+            // Display a success message on the index page
+            displayNotification(data.success, data.message)
         })
         .catch(error => {
             // Handle errors if needed
             console.error('Error submitting form', error);
-            alert('Error submitting form');
+            console.log(data.success, data.message);
+            // Display a success message on the index page
+            displayNotification(data.success, data.message)
         });    
     })
 
@@ -458,11 +486,13 @@ document.addEventListener('DOMContentLoaded', function () {
                     .then(response => response.json())
                     .then(data => {
                         // Handle the server response if needed
-                        console.log(data);
-                        location.reload();
+                        loadCourseData()
+                        displayNotification(data.success, data.message)
+                        
                     })
                     .catch(error => {
                         console.error('Error deleting item:', error);
+                        displayNotification(data.success, data.message)
                     });
                 } else if (target.classList.contains('project-btn')) {
                     // Send a request to the server to delete the item with the specified ID
@@ -472,11 +502,12 @@ document.addEventListener('DOMContentLoaded', function () {
                     .then(response => response.json())
                     .then(data => {
                         // Handle the server response if needed
-                        console.log(data);
-                        location.reload();
+                        loadProjectData()
+                        displayNotification(data.success, data.message)
                     })
                     .catch(error => {
                         console.error('Error deleting item:', error);
+                        displayNotification(data.success, data.message)
                     });
                 } else {
                     fetch(`/api/logs/${entryId}`, {
@@ -486,16 +517,21 @@ document.addEventListener('DOMContentLoaded', function () {
                     .then(data => {
                         // Handle the server response if needed
                         console.log(data);
-                        location.reload();
+                        loadLogsData();
+                        displayNotification(data.success, data.message)
                     })
                     .catch(error => {
                         console.error('Error deleting item:', error);
+                        displayNotification(data.success, data.message)
                     });
                 }
                     
                 // Hide the confirmation modal after deletion
                 hideModals();
             });
-        } 
+        } else if (target.classList.contains('edit-btn')) {
+            const entryId = target.getAttribute('data-entry-id');
+            displayEntryModal(entryId)
+        }
     });
 });

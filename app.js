@@ -11,10 +11,6 @@ app.use(express.urlencoded({extended: false}))
 app.use(express.json());
 app.use(express.static('public'));
 
-app.get('/', (req, res) => {
-    res.sendFile(path.resolve(__dirname, 'public', 'index.html'));
-})
-
 function elapsedTime (startTime, endTime) {
     try {
         let start = startTime.split(":");
@@ -35,6 +31,19 @@ function elapsedTime (startTime, endTime) {
         return null;
     }
 }
+
+function formatDateString(inputDate) {
+    // Ensure the inputDate is a string
+    inputDate = inputDate.toString();
+
+    // Add hyphens in the required positions
+    const formattedDate = `${inputDate.slice(0, 4)}-${inputDate.slice(4, 6)}-${inputDate.slice(6)}`;
+    return formattedDate;
+}
+
+app.get('/', (req, res) => {
+    res.sendFile(path.resolve(__dirname, 'public', 'index.html'));
+})
 
 app.post('/', (req, res) => {
     console.log("trying to post an entry");
@@ -125,8 +134,29 @@ app.get('/api/logs', (req, res) => {
     });
 });
 
+app.get('/api/logs/:id', async (req, res) => {
+    console.log('trying to fetch log data');
+    const entryId = req.params.id;
+    const query = `
+        SELECT logs.*, course.course_name AS course_name, project.project_name AS project_name
+        FROM logs
+        LEFT JOIN course ON logs.course_id = course.id
+        LEFT JOIN project ON logs.project_id = project.id
+        WHERE logs.id = ${entryId};`;
+
+    db.get(query, (err, rows) => {
+        if (err) {
+            console.error(err.message);
+            res.status(500).json({success: false, message: err.message});
+        } else {
+            rows.date = formatDateString(rows.date);
+            res.json({success: true, data: rows});
+        }
+    })
+});
+
 app.delete('/api/logs/:id', (req, res) => {
-    console.log("trying to delete a project");
+    console.log("trying to delete an entry");
     const entryId = req.params.id;
     
     const query = `
@@ -134,7 +164,75 @@ app.delete('/api/logs/:id', (req, res) => {
         WHERE id = ${entryId};`
     db.run(query)
 
-    res.json({ message: `Entry with ID ${entryId} deleted successfully` });
+    res.json({ success: true, message: `Entry with ID ${entryId} deleted successfully` });
+})
+
+app.put('/api/logs/:id', (req, res) => {
+    console.log("trying to change log data");
+    const entryId = req.params.id;
+    try {
+        let { course, project, date, startTime, endTime, description } = req.body;
+        
+        let project_id = null;
+        let course_id = null;
+
+        const getCourseId = () => {
+            return new Promise((resolve, reject) => {
+                db.get('SELECT id FROM course WHERE course_name = ?', [course], function (err, row) {
+                    if (err) {
+                        console.error(err.message);
+                        reject('Internal Server Error');
+                    } else {
+                        course_id = row ? row.id : null;
+                        resolve();
+                    }
+                });
+            });
+        };
+        const getProjectId = () => {
+            return new Promise((resolve, reject) => {
+                db.get('SELECT id FROM project WHERE project_name = ?', [project], function (err, row) {
+                    if (err) {
+                        console.error(err.message);
+                        reject('Internal Server Error');
+                    } else {
+                        project_id = row ? row.id : null;
+                        resolve();
+                    }
+                });
+            });
+        };
+
+        const mainFunction = async () => {
+            // Wait for both queries to complete
+            await Promise.all([getCourseId(), getProjectId()]);
+
+            // remove hyphens from date
+            date = date.replace(/-/g, '');
+
+            // determine elapsed time
+            const total_time = elapsedTime(startTime, endTime);
+            const insertQuery = `
+                UPDATE logs
+                SET course_id = ${course_id ?? 'NULL'}, project_id = ${project_id ?? 'NULL'}, date = ${date}, start_time = '${startTime}', end_time = '${endTime}', total_time = ${total_time}, description = '${description}'
+                WHERE id = ${entryId};
+            `;
+            console.log(insertQuery)
+            db.run(insertQuery);
+        };
+
+        // Call the async function
+        mainFunction();
+
+        res.status(201).json({success: true, message: "Your entry has been successfully added"});
+
+
+        // add validation here
+
+    } catch (error) {
+        console.error(error);
+        res.status(400).json({error: 'Bad Request' });
+    }
 })
 
 app.get('/api/history', (req, res) => {
@@ -258,7 +356,7 @@ app.delete('/api/courses/:id', (req, res) => {
         WHERE id = ${courseId};`
     db.run(query)
 
-    res.json({ message: `Course with ID ${courseId} deleted successfully` });
+    res.json({ success: true, message: `Course with ID ${courseId} deleted successfully` });
 })
 
 app.get('/api/projects', (req,res) => {
@@ -324,7 +422,7 @@ app.delete('/api/projects/:id', (req, res) => {
         WHERE id = ${projectId};`
     db.run(query)
 
-    res.json({ message: `Project with ID ${projectId} deleted successfully` });
+    res.json({success: true, message: `Project with ID ${projectId} deleted successfully` });
 })
 
 app.get('/api/options', (req, res) => {
