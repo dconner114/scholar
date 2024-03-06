@@ -1,188 +1,196 @@
-
 html {
-    font-family: sans-serif;
+  font-family: sans-serif;
 }
 
 body {
-    margin: 5vh 15vh;
-    background-color:#AE8789;
-    color: #FFDADB;
+  margin: 5vh 10vw;
+  background-color: #dbdfe2;
+  color: #1c2023;
 }
 
+@media screen and (max-width: 1600px) {
+  body {
+    margin: 5vh 5vw;
+  }
+}
 .notification-bar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    background-color: #f5f5f5;
-    padding: 10px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    z-index: 9999;
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: auto;
+  border-radius: 20px;
+  background-color: #C3D7A4;
+  padding: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  z-index: 9999;
 }
 
 .notification-bar.sticky {
-    position: fixed;
-    top: 0;
-    left: 0;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  top: 0;
+  left: 0;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .notification-bar p {
-    margin: 0;
+  margin: 0;
 }
 
 .close-notification-button {
-    float: right;
+  float: right;
 }
 
 h1 {
-    text-align: start;
+  text-align: start;
 }
 
 p {
-    text-align: start;
+  text-align: start;
 }
 
 button {
-    border-radius: 25px;
-    border-style: none;
-    color: #FFDADB;
-    background-color:#610E20;
-    text-align: center; 
-    padding: 5px 10px;
-    cursor: pointer;
-    transition: transform 0.3s, box-shadow 0.3s;
+  border-radius: 25px;
+  border-style: none;
+  color: #b8c0c6;
+  background-color: #a99596;
+  text-align: center;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: transform 0.3s, box-shadow 0.3s;
 }
 
 button:hover {
-    background-color: #AE8789;
-    color: #610E20;
-    -webkit-transform: translateY(-1px);
-	transform: translateY(-2px); 
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+  background-color: #384046;
+  -webkit-transform: translateY(-1px);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 button.edit-btn, button.delete-btn {
-    background-color: #FFDADB;
-    color: #610E20;
+  background-color: #b8c0c6;
+  color: #1c2023;
 }
 
 button.edit-btn:hover, button.delete-btn:hover {
-    background-color: #610E20;
-    color: #FFDADB;
+  background-color: #384046;
+  color: #b8c0c6;
 }
 
 .active {
-    display: block;
+  display: block;
 }
 
 .grid-container {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    grid-template-rows: auto auto;
-    grid-gap: 15px;
-    justify-content: center;
-    align-items: top;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-rows: auto auto;
+  grid-gap: 15px;
+  justify-content: center;
+  align-items: top;
 }
 
 .grid-item {
-    border-radius: 20px;
-    background-color: #FFDADB;
-    color: #610E20;
-    padding: 20px 50px;
-    text-align: center;
-    justify-content: center;
-    height: auto;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 20px;
+  background-color: #b8c0c6;
+  color: #1c2023;
+  padding: 20px 50px;
+  text-align: center;
+  justify-content: center;
+  height: auto;
+  /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); */
 }
 
 .span-2 {
-    grid-column: span 2;
+  grid-column: span 2;
 }
 
 .span-3 {
-    grid-column: span 3;
+  grid-column: span 3;
 }
 
+.span-4 {
+  grid-column: span 4;
+  background-color: #dbdfe2;
+}
 
 /* Styles for the overlay */
 .overlay {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.7); /* Adjust the alpha value for darkness */
-    z-index: 1; /* Place the overlay on top of other elements */
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7); /* Adjust the alpha value for darkness */
+  z-index: 1; /* Place the overlay on top of other elements */
 }
 
 .modal {
-    display: none; /* Hidden by default */
-    position: fixed; /* Stay in place */
-    z-index: 1; /* Sit on top */
-    left: 0;
-    top: 0;
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    overflow: auto; /* Enable scroll if needed */
-    background-color: rgb(0,0,0); /* Fallback color */
-    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0, 0, 0); /* Fallback color */
+  background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
 }
-
 
 /* Styles for the centered modal */
 .modal-content {
-    display: block;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: #FFDADB; /* Set your desired background color */
-    color: #610E20;
-    padding: 40px;
-    border-radius: 20px;
-    z-index: 2; /* Place the modal above the overlay */
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Optional: Add a box shadow for depth */
+  display: block;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #FFDADB; /* Set your desired background color */
+  color: #610E20;
+  padding: 40px;
+  border-radius: 20px;
+  z-index: 2; /* Place the modal above the overlay */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Optional: Add a box shadow for depth */
 }
-
 
 /* Table styles */
 table {
-    border-collapse: collapse;
-    width: 100%;
+  border-collapse: collapse;
+  width: 100%;
 }
 
 tr.entry {
-    transition: background-color 0.2s, color 0.2s;
+  transition: background-color 0.2s, color 0.2s;
 }
 
 tr.entry:hover {
-    background-color: #AE8789;
-    color: #FFDADB;
+  background-color: #AE8789;
+  color: #FFDADB;
 }
 
 td.left {
-    border-top-left-radius: 20px;
-    border-bottom-left-radius: 20px;
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
 }
 
 td.right {
-    border-top-right-radius: 20px;
-    border-bottom-right-radius: 20px;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
 }
 
 td, th {
-    border: 0px;
-    padding-top: 8px;
-    padding-bottom: 8px;
-    text-align: left;
+  border: 0px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  text-align: left;
 }
 
 /* Input styles */
 select, input, textarea {
-    border-radius: 15px;
-    border: 0px;
-    padding: 10px;
-    margin: 5px;
+  border-radius: 15px;
+  border: 0px;
+  padding: 10px;
+  margin: 5px;
 }
+
+/*# sourceMappingURL=styles.css.map */

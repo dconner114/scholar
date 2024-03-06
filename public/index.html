@@ -7,16 +7,19 @@
     <link rel="stylesheet" href="styles.css" />
 </head>
 
-<body>
-    
-    <h1>Scholar</h1>
-
+<body>  
     <div class="notification-bar">
         <p>This is a notification</p>
         <button class="close-notification-button">X</button>
     </div>
+    
+    <!-- <h1>Scholar</h1> -->
 
     <div class="grid-container">
+        
+        <div id="summary" class="grid-item">
+            add data here
+        </div>
         
         <div id="history" class="grid-item span-2">
             <h1>Summary</h1>
@@ -33,7 +36,7 @@
             <button onclick="addLongBreak()">Long Break</button>
         </div>
     
-        <div id="logData" class="grid-item span-3">
+        <div id="logData" class="grid-item span-4">
             <h1>My Sessions</h1>
             <button id="newEntryButton">Add entry</button>      
             <table id="logsTable">
@@ -54,7 +57,7 @@
             </table>
         </div>
      
-        <div id="courseManager" class="grid-item">
+        <div id="courseManager" class="grid-item span-2">
             <h1>Courses</h1>
             <button id="newCourseButton">Add Course</button>
             <table id="courseTable">
@@ -70,7 +73,7 @@
             </table>
         </div>
     
-        <div id="projectManager" class="grid-item">
+        <div id="projectManager" class="grid-item span-2">
             <h1>Projects</h1>
             <button id="newProjectButton">Add Project</button>
             <table id="projectTable">

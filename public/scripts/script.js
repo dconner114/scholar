@@ -10,11 +10,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function displayNotification(success, message) {
         notificationText.innerHTML = message;
-        if (success) {
-            notificationText.style.backgroundColor = '#00FF00';
-        } else {
-            notificationText.style.backgroundColor = '#FF0000';
-        }
         notificationBar.style.display = 'block';
 
     }
@@ -98,7 +93,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     <td>${formatTime(row.total_time)}</td>
                     <td class="right">
                             <button class="delete-btn course-btn" id="confirm-req" data-entry-id="${row.id}">Del</button>
-                            <button class="edit-btn course-btn" data-entry-id="${row.id}">Edit</button>
                         </td>
                     </tr>`
                     table.querySelector('tbody').insertAdjacentHTML('beforeend', newRow);
@@ -120,7 +114,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     <td>${formatTime(row.total_time)}</td>
                     <td class="right">
                             <button class="delete-btn project-btn" id="confirm-req" data-entry-id="${row.id}">Del</button>
-                            <button class="edit-btn project-btn" data-entry-id="${row.id}">Edit</button>
                         </td>
                     <tr>`
                     table.querySelector('tbody').insertAdjacentHTML('beforeend', newRow);
