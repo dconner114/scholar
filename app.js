@@ -120,8 +120,7 @@ app.get('/api/logs', (req, res) => {
         FROM logs
         LEFT JOIN course ON logs.course_id = course.id
         LEFT JOIN project ON logs.project_id = project.id
-        ORDER BY date DESC
-        LIMIT 12;
+        ORDER BY date DESC;
     `;
 
     db.all(query, [], (err, rows) => {

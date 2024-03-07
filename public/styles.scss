@@ -2,16 +2,27 @@
 // colors
 
 // Harvard 
-$background-color: #dbdfe2;
 
-$primary-color: #a99596;
-$card-color: #b8c0c6;
-$button-hover-color: #384046;
+$background-color: #FFFFFF;
+//$background-color: #3C4B37;
+$table-color: #F8FBF1;
 
-$success-message-color: #C3D7A4;
-$failure-message-color: #FFDB6D;
-$primary-text-color: #1c2023;
-$secondary-text-color: #b8c0c6;
+$primary-color: #73796E;
+$card-color: #ECEFE5;
+$button-color: #BBCBB2;
+$button-hover-color: #3C4B37;
+
+$header-container-color: #E1E4DA;
+
+$success-container-color: #C0EFB0;
+$success-text-color: #002200;
+
+$error-container-color: #FFDAD6;
+$error-text-color: #410002;
+
+
+$primary-text-color: #191D17;
+$secondary-text-color: #F2F5EB;
 
 
 // $background-color: #F9F1F2;
@@ -30,20 +41,32 @@ $old-button-color: #610E20;
 
 
 html { 
-    font-family: sans-serif;
+    font-family: 'Roboto', sans-serif; 
 }
 
 body {
-    margin: 5vh 10vw;
+    margin: 0;
+    max-height: 100vh;
+    background-color: $background-color;
+}
+
+.top-bar {
+    background-color: $card-color;
+    color: $primary-text-color;
+    padding: 20px;
+}
+
+.main-body {
+    margin: 2.5vh 2.5vw;
     background-color:$background-color;
     color: $primary-text-color;
 }
 
-@media screen and (max-width: 1600px) {
-    body {
-        margin: 5vh 5vw;
-    }
-}
+// @media screen and (max-width: 1600px) {
+//     body {
+//         margin: 5vh 5vw;
+//     }
+// }
 
 .notification-bar {
     position: fixed;
@@ -52,7 +75,8 @@ body {
     transform: translateX(-50%);
     width: auto;
     border-radius: 20px;
-    background-color: $success-message-color;
+    background-color: $success-container-color;
+    color: $success-text-color;
     padding: 10px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     z-index: 9999;
@@ -73,8 +97,9 @@ body {
 }
 
 h1 {
-    text-align: start;
-} 
+    text-align: start; 
+    margin: 0;
+}
 
 p {
     text-align: start;
@@ -83,8 +108,8 @@ p {
 button {
     border-radius: 25px;
     border-style: none;
-    color: $secondary-text-color;
-    background-color:$primary-color;
+    color: $primary-text-color;
+    background-color:$button-color;
     text-align: center; 
     padding: 5px 10px;
     cursor: pointer;
@@ -93,10 +118,11 @@ button {
 
 button:hover {
     background-color: $button-hover-color;
+    color: $secondary-text-color;
     //color: $primary-color;
     -webkit-transform: translateY(-1px);
 	transform: translateY(-2px); 
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);  
 }
 
 button.edit-btn, button.delete-btn { 
@@ -113,43 +139,78 @@ button.edit-btn:hover, button.delete-btn:hover {
     display: block; 
 }
 
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0px;
+    padding-bottom: 10px;
+}
+
+.header button {
+    position: relative;
+    top: -15px;
+    right: -15px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    padding: 0px;
+    font-size: 36px;
+}
+
 .grid-container {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-    grid-template-rows: auto auto;
+    grid-template-columns: 1fr 2fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
     grid-gap: 15px;
     justify-content: center;
-    align-items: top;
+    align-items: stretch; 
+    max-height: 90vh;
 }
 
 .grid-item {
-    border-radius: 20px;
+    border-radius: 35px;
     background-color: $card-color;
     color: $primary-text-color;
-    padding: 20px 50px;
+    padding: 40px;
     text-align: center;
     justify-content: center;
-    height: auto;
-    /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
 }
 
-.span-2 {
-    grid-column: span 2;
-    //background-color: $primary-color-light;
+.item-a {
+    grid-column: 1 / span 1;
+    grid-row: 1 / span 1;
 }
 
-.span-3 {
-    grid-column: span 3;
+.item-b {
+    grid-column: 1 / span 1;
+    grid-row: 2 / span 4;
 }
 
-.span-4 {
-    grid-column: span 4;
-    background-color: $background-color; 
+.item-c {
+    grid-column: 2 / span 1;
+    grid-row: 1 / span 5;
 }
 
+.item-d {
+    grid-column: 3 / span 1;
+    grid-row: 1 / span 1;
+}
+
+.item-e {
+    grid-column: 3 / span 1;
+    grid-row: 2 / span 2;
+}
+
+.item-f {
+    grid-column: 3 / span 1;
+    grid-row: 4 / span 2;
+}
 
 /* Styles for the overlay */
-.overlay {
+.overlay { 
     display: none; 
     position: fixed;
     top: 0;
@@ -173,7 +234,6 @@ button.edit-btn:hover, button.delete-btn:hover {
     background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
 }
 
-
 /* Styles for the centered modal */ 
 .modal-content {
     display: block;
@@ -181,19 +241,28 @@ button.edit-btn:hover, button.delete-btn:hover {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: #FFDADB; /* Set your desired background color */
-    color: #610E20;
+    background-color: $card-color; /* Set your desired background color */
+    color: $primary-text-color;
     padding: 40px;
     border-radius: 20px;
     z-index: 2; /* Place the modal above the overlay */
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Optional: Add a box shadow for depth */
 }
 
-
 /* Table styles */
+
+.table-wrapper {
+    height: auto;
+    padding: 10px;
+    overflow-y: auto; 
+    //background-color: $table-color;
+    border-radius: 10px;
+}
 table {
+    overflow-y: hidden;
     border-collapse: collapse;
     width: 100%;
+    //background-color: $table-color;
 }
 
 tr.entry {
@@ -201,8 +270,8 @@ tr.entry {
 }
 
 tr.entry:hover {
-    background-color: #AE8789;
-    color: #FFDADB;
+    background-color: $button-color;
+    color: $secondary-text-color;
 }
 
 td.left {
@@ -222,10 +291,55 @@ td, th {
     text-align: left;
 }
 
+.description {
+    overflow: hidden;
+}
+
 /* Input styles */
 select, input, textarea {
     border-radius: 15px;
     border: 0px;
     padding: 10px;
     margin: 5px; 
+}
+
+.pomodoro-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
+    grid-gap: 5px;
+    justify-content: stretch;
+    align-items: stretch;
+    margin: 0;
+}
+
+.pomodoro-item-a {
+    text-align: center;
+    grid-column: 1 / span 2;
+    grid-row: 1 / span 2;
+}
+
+.pomodoro-item-b {
+    grid-column: 1 / span 1;
+    grid-row: 3 / span 1;
+}
+
+.pomodoro-item-c {
+    grid-column: 2 / span 1;
+    grid-row: 3 / span 1;
+}
+
+.pomodoro-item-1 {
+    grid-column: 3 / span 1;
+    grid-row: 1 / span 1;
+}
+
+.pomodoro-item-2 {
+    grid-column: 3 / span 1;
+    grid-row: 2 / span 1;
+}
+
+.pomodoro-item-3 {
+    grid-column: 3 / span 1;
+    grid-row: 3 / span 1;
 }

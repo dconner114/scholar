@@ -7,137 +7,161 @@
     <link rel="stylesheet" href="styles.css" />
 </head>
 
-<body>  
+<body> 
+
     <div class="notification-bar">
         <p>This is a notification</p>
         <button class="close-notification-button">X</button>
     </div>
-    
-    <!-- <h1>Scholar</h1> -->
 
-    <div class="grid-container">
-        
-        <div id="summary" class="grid-item">
-            add data here
-        </div>
-        
-        <div id="history" class="grid-item span-2">
-            <h1>Summary</h1>
-            <canvas id="historyChart"></canvas>
-        </div>
-
-        <div id="timer" class="grid-item">
-            <h1>Pomodoro Timer</h1>
-            <h1 id="display">00:00</h1>
-            <button onclick="startTimer()">Start</button>
-            <button onclick="clearTimer()">Clear</button>
-            <button onclick="setPomodoroTime()">Pomodoro</button>
-            <button onclick="addShortBreak()">Short Break</button>
-            <button onclick="addLongBreak()">Long Break</button>
-        </div>
-    
-        <div id="logData" class="grid-item span-4">
-            <h1>My Sessions</h1>
-            <button id="newEntryButton">Add entry</button>      
-            <table id="logsTable">
-                <thead>
-                    <tr>
-                        <th>Course</th>
-                        <th>Project</th>
-                        <th>Date</th>
-                        <th>Start</th>
-                        <th>End</th>
-                        <th>Description</th>
-                        <th>Total time (m)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- entries inserted when page loads -->
-                </tbody>
-            </table>
-        </div>
-     
-        <div id="courseManager" class="grid-item span-2">
-            <h1>Courses</h1>
-            <button id="newCourseButton">Add Course</button>
-            <table id="courseTable">
-                <thead>
-                    <tr>
-                        <th>Course</th>
-                        <th>hours</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- entries inserted when page loads -->
-                </tbody>
-            </table>
-        </div>
-    
-        <div id="projectManager" class="grid-item span-2">
-            <h1>Projects</h1>
-            <button id="newProjectButton">Add Project</button>
-            <table id="projectTable">
-                <thead>
-                    <tr>
-                        <th>Project</th>
-                        <th>hours</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- entries inserted when page loads -->
-                </tbody>
-            </table>
-        </div>
-    
+    <div class="top-bar">
+        <h1>Scholar</h1>
     </div>
     
-    <div class="overlay" id="overlay" style="display: none;"></div>
-    <div id="entryModal" class="modal-content">
-        <div class="modal-content">
-            <form id="entryForm">
+    <div class="main-body">
+        <div class="grid-container">
+            
+            <div id="summary" class="grid-item item-a">
+                summary here
+            </div>
+            
+            <div id="history" class="grid-item item-b">
+                <h1>History</h1>
+                <canvas id="historyChart"></canvas>
+            </div>
+    
+            <div id="logData" class="grid-item item-c">
+                <div class="header">
+                    <h1>Sessions</h1>
+                    <button id="newEntryButton">+</button> 
+                </div>
+                <div class="table-wrapper">
+                    <table id="logsTable">
+                        <thead>
+                            <tr>
+                                <th>Course</th>
+                                <th>Project</th>
+                                <th>Date</th>
+                                <th>Start</th>
+                                <th>End</th>
+                                <th>Description</th>
+                                <th>Total time (m)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- entries inserted when page loads -->
+                        </tbody>
+                    </table>
+                </div>     
+            </div>
+    
+            <div id="timer" class="grid-item item-d">
+                <div class="pomodoro-grid">
+                    <!-- <h1>Pomodoro Timer</h1> -->
+                
+                    <h1 id="display" class="pomodoro-item-a">00:00</h1>
+                    <button class="pomodoro-item-b" onclick="startTimer()">Start</button>
+                    <button class="pomodoro-item-c" onclick="clearTimer()">Clear</button>
+                
+                    
+                    <button class="pomodoro-item-1" onclick="setPomodoroTime()">Pomodoro</button>
+                    <button class="pomodoro-item-2" onclick="addShortBreak()">Short Break</button>
+                    <button class="pomodoro-item-3" onclick="addLongBreak()">Long Break</button>
+                   
+                </div>
+            </div>
+        
+         
+            <div id="courseManager" class="grid-item item-e">
+                <div class="header">
+                    <h1>Courses</h1>
+                    <button id="newCourseButton">+</button>
+                </div>
+                <div class="table-wrapper">
+                    <table id="courseTable">
+                        <thead>
+                            <tr>
+                                <th>Course</th>
+                                <th>hours</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- entries inserted when page loads -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        
+            <div id="projectManager" class="grid-item item-f">
+                <div class="header">
+                    <h1>Projects</h1>
+                    <button id="newProjectButton">+</button>
+                </div>
+                <div class="table-wrapper">
+                    <table id="projectTable">
+                        <thead>
+                            <tr>
+                                <th>Project</th>
+                                <th>hours</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- entries inserted when page loads -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>  
+        </div>
+        
+        <div class="overlay" id="overlay" style="display: none;"></div>
+        <div id="entryModal" class="modal-content">
+            <div class="modal-content">
+                <form id="entryForm">
+                    <label for="course">Course</label>
+                    <select type="text" id="course" name="course"></select> <!-- js populates options-->
+                    <label for="project">Project</label>
+                    <select type="text" id="project" name="project"></select>
+                    <label for="date">Date</label>
+                    <input type="date" id="date" name="date" required>
+                    <label for="startTime">Start</label>
+                    <input type="time" id="startTime" name="startTime" required>
+                    <label for="endTime">End</label>
+                    <input type="time" id="endTime" name="endTime" required>
+                    <label for="description">Description</label>
+                    <textarea id="description" name="description" required></textarea>
+                    <button type="button" id="close">Cancel</button>
+                    <button type="submit" name="submit" id="entryFormSubmit">Submit</button>
+                </form>
+            </div>
+        </div>
+        <div id="courseModal" class="modal-content">
+            <form id="courseForm">
                 <label for="course">Course</label>
-                <select type="text" id="course" name="course"></select> <!-- js populates options-->
-                <label for="project">Project</label>
-                <select type="text" id="project" name="project"></select>
-                <label for="date">Date</label>
-                <input type="date" id="date" name="date" required>
-                <label for="startTime">Start</label>
-                <input type="time" id="startTime" name="startTime" required>
-                <label for="endTime">End</label>
-                <input type="time" id="endTime" name="endTime" required>
+                <input type="text" id="course" name="course">
                 <label for="description">Description</label>
-                <textarea id="description" name="description" required></textarea>
+                <textarea id="description" name="description"></textarea>
                 <button type="button" id="close">Cancel</button>
-                <button type="submit" name="submit" id="entryFormSubmit">Submit</button>
+                <button type="submit" name="submit">Submit</button>
             </form>
         </div>
-    </div>
-    <div id="courseModal" class="modal-content">
-        <form id="courseForm">
-            <label for="course">Course</label>
-            <input type="text" id="course" name="course">
-            <label for="description">Description</label>
-            <textarea id="description" name="description"></textarea>
-            <button type="button" id="close">Cancel</button>
-            <button type="submit" name="submit">Submit</button>
-        </form>
-    </div>
-    <div id="projectModal" class="modal-content">
-        <form id="projectForm">
-            <label for="project">Project</label>
-            <input type="text" id="project" name="project">
-            <label for="description">Description</label>
-            <textarea id="description" name="description"></textarea>
-            <button type="button" id="close">Cancel</button>
-            <button type="submit" name="submit">Submit</button>
-        </form>
-    </div>
-    <div id="confirmationModal" class="modal-content">
-        <h2>Are you sure?</h2>
-        <p>This will delete all entries related to the project or course</p>
-        <button id="close">Cancel</button>
-        <button id="confirm">Confirm</button>
-    </div>
+        <div id="projectModal" class="modal-content">
+            <form id="projectForm">
+                <label for="project">Project</label>
+                <input type="text" id="project" name="project">
+                <label for="description">Description</label>
+                <textarea id="description" name="description"></textarea>
+                <button type="button" id="close">Cancel</button>
+                <button type="submit" name="submit">Submit</button>
+            </form>
+        </div>
+        <div id="confirmationModal" class="modal-content">
+            <h2>Are you sure?</h2>
+            <p>This will delete all entries related to the project or course</p>
+            <button id="close">Cancel</button>
+            <button id="confirm">Confirm</button>
+        </div>
+    </div> 
+    
     <script src="./scripts/script.js"></script>
     <script src="./scripts/timer.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

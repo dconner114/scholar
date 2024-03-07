@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         <td>${formattedDate}</td>
                         <td>${row.start_time}</td>
                         <td>${row.end_time}</td>
-                        <td>${row.description || ''}</td>
+                        <td class="description">${row.description || ''}</td>
                         <td>${formatTime(row.total_time)}</td>
                         <td class="right">
                             <button class="delete-btn" data-entry-id="${row.id}">Del</button>
