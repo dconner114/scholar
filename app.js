@@ -237,13 +237,9 @@ app.put('/api/logs/:id', (req, res) => {
 app.get('/api/history', (req, res) => {
     let currentDate = new Date();
 
-    let year = String(currentDate.getFullYear());
-    let month = (String(currentDate.getMonth() + 1)).length > 1 ? String(currentDate.getMonth() + 1) : ('0' + String(currentDate.getMonth() + 1));
-    let day = (String(currentDate.getDate() + 1)).length > 1 ? String(currentDate.getDate()) : ('0' + String(currentDate.getDate()));;
-
     let pastDates = [];
     
-    for(let i = 6; i >= 0; i--) {
+    for(let i = 365; i >= 0; i--) {
         let temp = new Date(currentDate)
         temp.setDate(currentDate.getDate() - i)
         pastDates.push(temp);
@@ -255,7 +251,7 @@ app.get('/api/history', (req, res) => {
         let day = (String(item.getDate())).padStart(2, '0');
         
         return parseInt(year + month + day, 10);
-    })
+    });
 
     const query = `
         SELECT 
@@ -276,19 +272,30 @@ app.get('/api/history', (req, res) => {
             console.error(err.message);
             res.status(500).json({ error: 'Internal Server Error' });
         } else {
-            const serverResponseMap = new Map(rows.map(item => [item.date, item]));
-            const result = intDates.map(date => {
-                if (serverResponseMap.has(date)) {
-                  return serverResponseMap.get(date); // Do nothing, return the existing object
-                } else {
-                  return { date, total_time: 0 }; // Add a new object with total_time: 0
-                }
-              });
-            res.json(result);
+            const results = {};
+
+            // Organize data by day
+            results.day_results = intDates.map(date => {
+                const matchingRow = rows.find(row => row.date === date);
+                return {
+                    date,
+                    total_time: matchingRow ? matchingRow.total_time : 0
+                };
+            });
+
+            
+            // Organize data by week
+            // ... similar logic as above ...
+
+            // Organize data by month
+            // ... similar logic as above ...
+
+            // Now you can log the result and send the response
+            console.log(results);
+            res.json(results);
         }
     });
-    
-})
+});
 
 app.get('/api/courses', (req,res) => {
     const query = `

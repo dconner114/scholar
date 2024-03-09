@@ -24,6 +24,8 @@ $error-text-color: #410002;
 $primary-text-color: #191D17;
 $secondary-text-color: #F2F5EB;
 
+$card-radius: 35px;
+
 
 // $background-color: #F9F1F2;
 // $primary-color: #B7626C;
@@ -68,28 +70,13 @@ body {
 //     }
 // }
 
-.notification-bar {
-    position: fixed;
-    top: 20px; 
-    left: 50%;
-    transform: translateX(-50%);
-    width: auto;
-    border-radius: 20px;
-    background-color: $success-container-color;
-    color: $success-text-color;
-    padding: 10px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    z-index: 9999;
-}
+
+
 
 .notification-bar.sticky {
     top: 0;
     left: 0;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.notification-bar p {
-    margin: 0;
 }
 
 .close-notification-button {
@@ -158,6 +145,31 @@ button.edit-btn:hover, button.delete-btn:hover {
     font-size: 36px;
 }
 
+.header .close-button {
+    position: relative;
+    top: -15px;
+    right: -15px;
+    width: 50px;
+    height: 50px;
+    padding: 10px;
+    font-size: 36px;
+    color: $button-color;
+    background-color:$card-color;
+    cursor: pointer;
+    
+
+}
+
+.header .close-button:hover {
+    color: $primary-text-color;
+    transition: none;
+    -webkit-trans1: none;
+    transform: none;
+    box-shadow: none;
+}
+
+
+
 .grid-container {
     display: grid;
     grid-template-columns: 1fr 2fr 1fr;
@@ -169,7 +181,7 @@ button.edit-btn:hover, button.delete-btn:hover {
 }
 
 .grid-item {
-    border-radius: 35px;
+    border-radius: $card-radius;
     background-color: $card-color;
     color: $primary-text-color;
     padding: 40px;
@@ -240,11 +252,13 @@ button.edit-btn:hover, button.delete-btn:hover {
     position: fixed;
     top: 50%;
     left: 50%;
+    text-align: center;
+    justify-content: center;
     transform: translate(-50%, -50%);
     background-color: $card-color; /* Set your desired background color */
     color: $primary-text-color;
     padding: 40px;
-    border-radius: 20px;
+    border-radius: $card-radius;
     z-index: 2; /* Place the modal above the overlay */
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Optional: Add a box shadow for depth */
 }
@@ -275,13 +289,13 @@ tr.entry:hover {
 }
 
 td.left {
-    border-top-left-radius: 10px;
-    border-bottom-left-radius: 10px; 
+    border-top-left-radius: 20px;
+    border-bottom-left-radius: 20px; 
 }
 
 td.right {
-    border-top-right-radius: 10px;
-    border-bottom-right-radius: 10px;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
 }
 
 td, th {
@@ -291,17 +305,45 @@ td, th {
     text-align: left;
 }
 
+.formgrid {
+    display: grid;
+    grid-template-columns: auto 1em auto;
+    grid-gap: 0.3em 0.6em;
+    align-items: center;
+}
+
+label {
+    width: auto;
+    padding: 0;
+    margin: 0;
+    text-align: right;
+}
+
 .description {
     overflow: hidden;
 }
 
 /* Input styles */
 select, input, textarea {
+    grid-column: 2 / span 2; /* Span two columns starting from the second column */
     border-radius: 15px;
-    border: 0px;
+    border: 0; /* Add a border for better visibility */
     padding: 10px;
-    margin: 5px; 
+    margin: 0;
+    max-width: 100%;
 }
+
+textarea {
+    min-width: 10em;
+    min-height: 3em;
+}
+
+.submit-row {
+    grid-column: 1 / span 3; /* Span three columns starting from the first column */
+    text-align: right; /* Align the button to the right */
+    margin-top: 1em; /* Add some space between the last input and the button */
+}
+
 
 .pomodoro-grid {
     display: grid;
@@ -342,4 +384,44 @@ select, input, textarea {
 .pomodoro-item-3 {
     grid-column: 3 / span 1;
     grid-row: 3 / span 1;
+}
+
+h5 {
+    margin-block-end: 0;
+    margin-block-start: 0;
+}
+
+.notification-bar {
+    display:flex;
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%);
+    width: auto;
+    height: 3em;
+    border-radius: 20px;
+    background-color: $success-container-color;
+    color: $success-text-color;
+    justify-content: center;
+    padding: .5em;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    z-index: 9999;
+}
+
+.notification-bar button {
+    width: default;
+    height: default;
+    font-size: 0.83em;
+    padding: 0px;
+    color: $button-color;
+    background-color: inherit;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.notification-bar button:hover {
+    color: $primary-text-color;
+    transition: none;
+    -webkit-trans1: none;
+    transform: none;
+    box-shadow: none;
 }

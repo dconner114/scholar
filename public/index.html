@@ -9,14 +9,86 @@
 
 <body> 
 
+
+    <div class="overlay" id="overlay" style="display: none;"></div>
+        <div id="entryModal" class="modal-content">
+            <div class="modal-content">
+                <div class="header">
+                    <h1>Entry</h1>
+                    <button class="close-button" type="button" id="close">x</button> 
+                </div>
+                <form class="formgrid" id="entryForm">
+                    
+                    <label for="course">Course</label>
+                    <select type="text" id="course" name="course"></select> <!-- js populates options-->
+                    <label for="project">Project</label>
+                    <select type="text" id="project" name="project"></select>
+                    <label for="date">Date</label>
+                    <input type="date" id="date" name="date" required>
+                    <label for="startTime">Start</label>
+                    <input type="time" id="startTime" name="startTime" required>
+                    <label for="endTime">End</label>
+                    <input type="time" id="endTime" name="endTime" required>
+                    <label for="description">Description</label>
+                    <textarea id="description" name="description" required></textarea>
+                    <!-- <button type="button" id="close">Cancel</button> -->
+                    <div class="submit-row">
+                        <button type="submit" name="submit">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div id="courseModal" class="modal-content">
+            <div class="header">
+                <h1>Course</h1>
+                <button class="close-button" type="button" id="close">x</button> 
+            </div>
+            <form class="formgrid" id="courseForm">
+                <label for="course">Course name</label>
+                <input type="text" id="course" name="course" required>
+                <label for="description">Description</label>
+                <textarea id="description" name="description"></textarea>
+                <!-- <button type="button" id="close">Cancel</button> -->
+                <div class="submit-row">
+                    <button type="submit" name="submit">Submit</button>
+                </div>
+            </form>
+        </div>
+        <div id="projectModal" class="modal-content">
+            <div class="header">
+                <h1>Project</h1>
+                <button class="close-button" type="button" id="close">x</button> 
+            </div>
+            <form class="formgrid" id="projectForm">
+                <label for="project">Project name</label>
+                <input type="text" id="project" name="project" required>
+                <label for="description">Description</label>
+                <textarea id="description" name="description"></textarea>
+                <!-- <button type="button" id="close">Cancel</button> -->
+                <div class="submit-row">
+                    <button type="submit" name="submit">Submit</button>
+                </div>
+            </form>
+        </div>
+        <div id="confirmationModal" class="modal-content">
+            <h2>Are you sure?</h2>
+            <p>This will delete all entries related to the project or course</p>
+            <button id="close">Cancel</button>
+            <button id="confirm">Confirm</button>
+        </div>
+    </div> 
+
+    
     <div class="notification-bar">
-        <p>This is a notification</p>
+        <h5>This is a notification</h5>
         <button class="close-notification-button">X</button>
     </div>
 
     <div class="top-bar">
         <h1>Scholar</h1>
     </div>
+
+
     
     <div class="main-body">
         <div class="grid-container">
@@ -27,7 +99,12 @@
             
             <div id="history" class="grid-item item-b">
                 <h1>History</h1>
-                <canvas id="historyChart"></canvas>
+                <h3>Week</h3>
+                <canvas id="weekChart"></canvas>
+                <h3>Month</h3>
+                <canvas id="monthChart"></canvas>
+                <h3>Year</h3>
+                <canvas id="yearChart"></canvas>
             </div>
     
             <div id="logData" class="grid-item item-c">
@@ -82,7 +159,7 @@
                         <thead>
                             <tr>
                                 <th>Course</th>
-                                <th>hours</th>
+                                <th>Time</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -102,7 +179,7 @@
                         <thead>
                             <tr>
                                 <th>Project</th>
-                                <th>hours</th>
+                                <th>Time</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -112,55 +189,6 @@
                 </div>
             </div>  
         </div>
-        
-        <div class="overlay" id="overlay" style="display: none;"></div>
-        <div id="entryModal" class="modal-content">
-            <div class="modal-content">
-                <form id="entryForm">
-                    <label for="course">Course</label>
-                    <select type="text" id="course" name="course"></select> <!-- js populates options-->
-                    <label for="project">Project</label>
-                    <select type="text" id="project" name="project"></select>
-                    <label for="date">Date</label>
-                    <input type="date" id="date" name="date" required>
-                    <label for="startTime">Start</label>
-                    <input type="time" id="startTime" name="startTime" required>
-                    <label for="endTime">End</label>
-                    <input type="time" id="endTime" name="endTime" required>
-                    <label for="description">Description</label>
-                    <textarea id="description" name="description" required></textarea>
-                    <button type="button" id="close">Cancel</button>
-                    <button type="submit" name="submit" id="entryFormSubmit">Submit</button>
-                </form>
-            </div>
-        </div>
-        <div id="courseModal" class="modal-content">
-            <form id="courseForm">
-                <label for="course">Course</label>
-                <input type="text" id="course" name="course">
-                <label for="description">Description</label>
-                <textarea id="description" name="description"></textarea>
-                <button type="button" id="close">Cancel</button>
-                <button type="submit" name="submit">Submit</button>
-            </form>
-        </div>
-        <div id="projectModal" class="modal-content">
-            <form id="projectForm">
-                <label for="project">Project</label>
-                <input type="text" id="project" name="project">
-                <label for="description">Description</label>
-                <textarea id="description" name="description"></textarea>
-                <button type="button" id="close">Cancel</button>
-                <button type="submit" name="submit">Submit</button>
-            </form>
-        </div>
-        <div id="confirmationModal" class="modal-content">
-            <h2>Are you sure?</h2>
-            <p>This will delete all entries related to the project or course</p>
-            <button id="close">Cancel</button>
-            <button id="confirm">Confirm</button>
-        </div>
-    </div> 
     
     <script src="./scripts/script.js"></script>
     <script src="./scripts/timer.js"></script>

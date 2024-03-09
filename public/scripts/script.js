@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const notificationBar = document.querySelector('.notification-bar');
     notificationBar.style.display = 'none';
-    var notificationText = notificationBar.querySelector('p');
+    var notificationText = notificationBar.querySelector('h5');
     const notificationClose = document.querySelector('.close-notification-button')
 
 
@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function displayNotification(success, message) {
         notificationText.innerHTML = message;
-        notificationBar.style.display = 'block';
+        notificationBar.style.display = 'flex';
 
     }
     function loadChartData() {
@@ -18,23 +18,31 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(response => response.json())
             .then(data => {
                 
-                const ctx = document.getElementById('historyChart');
-                dateLabels = data.map(item => {
+                const ctx_week = document.getElementById('weekChart');
+                const ctx_month = document.getElementById('monthChart');
+                const ctx_year = document.getElementById('yearChart');
+
+                dateLabels = data.day_results.map(item => {
                     const dateString = String(item.date);
                     return `${dateString.substring(4, 6)}/${dateString.substring(6, 8)}`;
                 })
 
-                new Chart(ctx, {
-                    type: 'line',
+                new Chart(ctx_week, {
+                    type: 'bar',
                     data: {
                     labels: dateLabels,
                     datasets: [{
-                        label: 'minutes',
-                        data: data.map(item => item.total_time),
+                        data: data.day_results.map(item => item.total_time / 60.0),
                         borderWidth: 1
                     }]
                     },
                     options: {
+                        autoPadding: true,
+                        plugins: {
+                            legend: {
+                            display: false
+                        }
+                    },
                     scales: {
                         y: {
                         beginAtZero: true
@@ -42,6 +50,66 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                     }
                 });
+                
+                weekLabels = data.week_results.map(item => {
+                    const dateString = String(item.date);
+                    return `${dateString.substring(4, 6)}/${dateString.substring(6, 8)}`;
+                })
+
+                new Chart(ctx_month, {
+                    type: 'bar',
+                    data: {
+                    labels: weekLabels,
+                    datasets: [{
+                        data: data.week_results.map(item => item.total_time / 60.0),
+                        borderWidth: 1
+                    }]
+                    },
+                    options: {
+                        autoPadding: true,
+                        plugins: {
+                            legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                        beginAtZero: true
+                        }
+                    }
+                    }
+                });
+
+                monthLabels = data.month_results.map(item => {
+                    const dateString = String(item.date);
+                    return `${dateString.substring(4, 6)}/${dateString.substring(6, 8)}`;
+                })
+
+                new Chart(ctx_year, {
+                    type: 'bar',
+                    data: {
+                    labels: monthLabels,
+                    datasets: [{
+                        data: data.month_results.map(item => item.total_time / 60.0),
+                        borderWidth: 1
+                    }]
+                    },
+                    options: {
+                        autoPadding: true,
+                        plugins: {
+                            legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                        beginAtZero: true
+                        }
+                    }
+                    }
+                });
+
+
             })
             .catch(error => console.error('Error fetching chart data:', error));
     }
@@ -327,6 +395,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 hideModals();
                 console.log(data.success, data.message);
                 loadLogsData();
+                loadCourseData();
+                loadProjectData();
                 displayNotification(data.success, data.message);
             })
             .catch(error => {
@@ -359,6 +429,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 hideModals();
                 console.log(data.success, data.message);
                 loadLogsData();
+                loadCourseData();
+                loadProjectData();
                 displayNotification(data.success, data.message);
             })
             .catch(error => {
@@ -479,7 +551,9 @@ document.addEventListener('DOMContentLoaded', function () {
                     .then(response => response.json())
                     .then(data => {
                         // Handle the server response if needed
-                        loadCourseData()
+                        loadCourseData();
+                        loadCourseData();
+                        loadProjectData();
                         displayNotification(data.success, data.message)
                         
                     })
