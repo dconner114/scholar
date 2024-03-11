@@ -235,32 +235,13 @@ app.put('/api/logs/:id', (req, res) => {
 })
 
 app.get('/api/history', (req, res) => {
-    let currentDate = new Date();
-
-    let pastDates = [];
     
-    for(let i = 365; i >= 0; i--) {
-        let temp = new Date(currentDate)
-        temp.setDate(currentDate.getDate() - i)
-        pastDates.push(temp);
-    }
-
-    const intDates = pastDates.map(item => {
-        let year = String(item.getFullYear());
-        let month = (String(item.getMonth() + 1)).padStart(2, '0');
-        let day = (String(item.getDate())).padStart(2, '0');
-        
-        return parseInt(year + month + day, 10);
-    });
-
     const query = `
         SELECT 
             date,
             SUM(total_time) AS total_time
         FROM 
             logs
-        WHERE 
-            date BETWEEN ${intDates[0]} AND ${intDates[intDates.length - 1]}
         GROUP BY 
             date
         ORDER BY 
@@ -272,18 +253,38 @@ app.get('/api/history', (req, res) => {
             console.error(err.message);
             res.status(500).json({ error: 'Internal Server Error' });
         } else {
-            const results = {};
-
-            // Organize data by day
-            results.day_results = intDates.map(date => {
-                const matchingRow = rows.find(row => row.date === date);
-                return {
-                    date,
-                    total_time: matchingRow ? matchingRow.total_time : 0
-                };
-            });
-
             
+            let data = {}
+
+            const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            let currentDate = new Date();
+
+            // populate object for hours in current week
+            let thisWeek = daysOfWeek.reduce((acc, day) => {
+                acc[day] = 0;
+                return acc;
+            }, {});
+
+            for (i = currentDate.getDay(); i >= 0; i --) {
+                
+            }
+
+            let cumulative_time = 0;
+            rows_chronological = rows.reverse();
+            let cumulative = rows_chronological.map(({ date, total_time }) => ({
+                "date": date,
+                "time": cumulative_time += total_time
+            }));
+            
+
+            data.cumulative_time = `${Math.floor(cumulative_time / 60)}hr ${cumulative_time % 60}m`;
+            data.cumulative = cumulative;
+        
+
+            res.json(data)
+
+            //console.log(rows);
+
             // Organize data by week
             // ... similar logic as above ...
 
@@ -291,11 +292,75 @@ app.get('/api/history', (req, res) => {
             // ... similar logic as above ...
 
             // Now you can log the result and send the response
-            console.log(results);
-            res.json(results);
-        }
+            // console.log(results);
+            // res.json(results);
+            
+        } 
     });
-});
+    return 0;
+})
+
+    
+    // let pastDates = [];
+    
+    // for(let i = 365; i >= 0; i--) {
+    //     let temp = new Date(currentDate)
+    //     temp.setDate(currentDate.getDate() - i)
+    //     pastDates.push(temp);
+    // }
+
+    // const intDates = pastDates.map(item => {
+    //     let year = String(item.getFullYear());
+    //     let month = (String(item.getMonth() + 1)).padStart(2, '0');
+    //     let day = (String(item.getDate())).padStart(2, '0');
+        
+    //     return parseInt(year + month + day, 10);
+    // });
+
+
+
+    // const query = `
+    //     SELECT 
+    //         date,
+    //         SUM(total_time) AS total_time
+    //     FROM 
+    //         logs
+    //     WHERE 
+    //         date BETWEEN ${intDates[0]} AND ${intDates[intDates.length - 1]}
+    //     GROUP BY 
+    //         date
+    //     ORDER BY 
+    //         date DESC;
+    // `;
+
+    // db.all(query, [], (err, rows) => {
+    //     if (err) {
+    //         console.error(err.message);
+    //         res.status(500).json({ error: 'Internal Server Error' });
+    //     } else {
+    //         const results = {};
+
+    //         // Organize data by day
+    //         results.day_results = intDates.map(date => {
+    //             const matchingRow = rows.find(row => row.date === date);
+    //             return {
+    //                 date,
+    //                 total_time: matchingRow ? matchingRow.total_time : 0
+    //             };
+    //         });
+
+            
+    //         // Organize data by week
+    //         // ... similar logic as above ...
+
+    //         // Organize data by month
+    //         // ... similar logic as above ...
+
+    //         // Now you can log the result and send the response
+    //         console.log(results);
+    //         res.json(results);
+    //     }
+    // });
 
 app.get('/api/courses', (req,res) => {
     const query = `

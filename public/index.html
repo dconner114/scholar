@@ -42,7 +42,7 @@
             <div class="header">
                 <h1>Course</h1>
                 <button class="close-button" type="button" id="close">x</button> 
-            </div>
+            </div> 
             <form class="formgrid" id="courseForm">
                 <label for="course">Course name</label>
                 <input type="text" id="course" name="course" required>
@@ -93,9 +93,9 @@
     <div class="main-body">
         <div class="grid-container">
             
-            <div id="summary" class="grid-item item-a">
+            <!-- <div id="summary" class="grid-item item-a">
                 summary here
-            </div>
+            </div> -->
             
             <div id="history" class="grid-item item-b">
                 <h1>History</h1>
@@ -103,8 +103,8 @@
                 <canvas id="weekChart"></canvas>
                 <h3>Month</h3>
                 <canvas id="monthChart"></canvas>
-                <h3>Year</h3>
-                <canvas id="yearChart"></canvas>
+                <h3 id="cumulative_time">Total time: Err</h3>
+                <canvas id="cumulative"></canvas>
             </div>
     
             <div id="logData" class="grid-item item-c">

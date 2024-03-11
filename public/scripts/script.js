@@ -20,19 +20,22 @@ document.addEventListener('DOMContentLoaded', function () {
                 
                 const ctx_week = document.getElementById('weekChart');
                 const ctx_month = document.getElementById('monthChart');
-                const ctx_year = document.getElementById('yearChart');
+                const cumulative_time = document.getElementById('cumulative_time');
+                cumulative_time.innerHTML = `Total time: ${data.cumulative_time}`
+                const ctx_cumulative = document.getElementById('cumulative');
+                
 
-                dateLabels = data.day_results.map(item => {
-                    const dateString = String(item.date);
-                    return `${dateString.substring(4, 6)}/${dateString.substring(6, 8)}`;
-                })
+                // dateLabels = data.day_results.map(item => {
+                //     const dateString = String(item.date);
+                //     return `${dateString.substring(4, 6)}/${dateString.substring(6, 8)}`;
+                // })
 
-                new Chart(ctx_week, {
-                    type: 'bar',
+                new Chart(ctx_cumulative, {
+                    type: 'line',
                     data: {
-                    labels: dateLabels,
+                    labels: data.cumulative.map(item => `${String(item.date).substring(4, 6)}/${String(item.date).substring(2, 4)}`),
                     datasets: [{
-                        data: data.day_results.map(item => item.total_time / 60.0),
+                        data: data.cumulative.map(item => item.time / 60.0),
                         borderWidth: 1
                     }]
                     },
@@ -51,63 +54,63 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                 });
                 
-                weekLabels = data.week_results.map(item => {
-                    const dateString = String(item.date);
-                    return `${dateString.substring(4, 6)}/${dateString.substring(6, 8)}`;
-                })
+                // weekLabels = data.week_results.map(item => {
+                //     const dateString = String(item.date);
+                //     return `${dateString.substring(4, 6)}/${dateString.substring(6, 8)}`;
+                // })
 
-                new Chart(ctx_month, {
-                    type: 'bar',
-                    data: {
-                    labels: weekLabels,
-                    datasets: [{
-                        data: data.week_results.map(item => item.total_time / 60.0),
-                        borderWidth: 1
-                    }]
-                    },
-                    options: {
-                        autoPadding: true,
-                        plugins: {
-                            legend: {
-                            display: false
-                        }
-                    },
-                    scales: {
-                        y: {
-                        beginAtZero: true
-                        }
-                    }
-                    }
-                });
+                // new Chart(ctx_month, {
+                //     type: 'bar',
+                //     data: {
+                //     labels: weekLabels,
+                //     datasets: [{
+                //         data: data.week_results.map(item => item.total_time / 60.0),
+                //         borderWidth: 1
+                //     }]
+                //     },
+                //     options: {
+                //         autoPadding: true,
+                //         plugins: {
+                //             legend: {
+                //             display: false
+                //         }
+                //     },
+                //     scales: {
+                //         y: {
+                //         beginAtZero: true
+                //         }
+                //     }
+                //     }
+                // });
 
-                monthLabels = data.month_results.map(item => {
-                    const dateString = String(item.date);
-                    return `${dateString.substring(4, 6)}/${dateString.substring(6, 8)}`;
-                })
+                // monthLabels = data.month_results.map(item => {
+                //     const dateString = String(item.date);
+                //     return `${dateString.substring(4, 6)}/${dateString.substring(6, 8)}`;
+                // })
 
-                new Chart(ctx_year, {
-                    type: 'bar',
-                    data: {
-                    labels: monthLabels,
-                    datasets: [{
-                        data: data.month_results.map(item => item.total_time / 60.0),
-                        borderWidth: 1
-                    }]
-                    },
-                    options: {
-                        autoPadding: true,
-                        plugins: {
-                            legend: {
-                            display: false
-                        }
-                    },
-                    scales: {
-                        y: {
-                        beginAtZero: true
-                        }
-                    }
-                    }
-                });
+                // new Chart(ctx_year, {
+                //     type: 'bar',
+                //     data: {
+                //     labels: monthLabels,
+                //     datasets: [{
+                //         data: data.month_results.map(item => item.total_time / 60.0),
+                //         borderWidth: 1
+                //     }]
+                //     },
+                //     options: {
+                //         autoPadding: true,
+                //         plugins: {
+                //             legend: {
+                //             display: false
+                //         }
+                //     },
+                //     scales: {
+                //         y: {
+                //         beginAtZero: true
+                //         }
+                //     }
+                //     }
+                // });
 
 
             })
