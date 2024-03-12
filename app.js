@@ -52,7 +52,6 @@ app.get('/', (req, res) => {
 app.post('/', (req, res) => {
     console.log("trying to post an entry");
     try {
-        console.log(req.body);
         let { course, project, date, startTime, endTime, description } = req.body;
         
         let project_id = null;
@@ -99,7 +98,6 @@ app.post('/', (req, res) => {
                 INSERT INTO logs (course_id, project_id, date, start_time, end_time, total_time, description)
                 VALUES (${course_id ?? 'NULL'}, ${project_id ?? 'NULL'}, ${date}, '${startTime}', '${endTime}', ${total_time}, '${description}');
             `;
-            console.log(insertQuery)
             db.run(insertQuery);
         };
     
@@ -220,7 +218,6 @@ app.put('/api/logs/:id', (req, res) => {
                 SET course_id = ${course_id ?? 'NULL'}, project_id = ${project_id ?? 'NULL'}, date = ${date}, start_time = '${startTime}', end_time = '${endTime}', total_time = ${total_time}, description = '${description}'
                 WHERE id = ${entryId};
             `;
-            console.log(insertQuery)
             db.run(insertQuery);
         };
 
@@ -295,8 +292,6 @@ app.get('/api/history', (req, res) => {
             let endMonth = currentDate.getMonth() + 1;
             let endDateInt = parseInt(`${endYear}${String(endMonth).padStart(2, '0')}31`);
 
-            console.log(`Start: ${startDateInt} \nEnd: ${endDateInt}`)
-
             const monthQuery = `
                 SELECT 
                     date,
@@ -344,13 +339,6 @@ app.get('/api/history', (req, res) => {
                     let endDateInt = parseInt(`${endYear}${String(endMonth).padStart(2, '0')}${String(currentDate.getDate()).padStart(2, '0')}`);
                     var dayTracker = {}
 
-                    // for (let i = daysToTrack; i >= 0; i--) {
-                    //     let temp_date = new Date(currentDate)
-                    //     temp_date.setDate(currentDate.getDate() - i);
-                    //     dayTracker[temp_date] = 0;
-                    // }
-
-                    console.log(dayTracker);
                     const dayQuery = `
                         SELECT 
                             SUM(total_time) as total
@@ -360,14 +348,11 @@ app.get('/api/history', (req, res) => {
                             date BETWEEN ${startDateInt} AND ${endDateInt};
                     `;
 
-                    console.log(dayQuery);
-
                     db.get(dayQuery, [], (err, rows) => {
                         if (err) {
                             console.error(err.message);
                             res.status(500).json({ error: 'Internal Server Error' });
                         } else {
-                            console.log(rows);
                             data.hoursThisWeek = `${Math.floor(rows.total / 60)}hr ${rows.total % 60}m`
                             res.json(data)
                         }});
@@ -377,68 +362,6 @@ app.get('/api/history', (req, res) => {
     });
     return 0;
 })
-
-    
-    // let pastDates = [];
-    
-    // for(let i = 365; i >= 0; i--) {
-    //     let temp = new Date(currentDate)
-    //     temp.setDate(currentDate.getDate() - i)
-    //     pastDates.push(temp);
-    // }
-
-    // const intDates = pastDates.map(item => {
-    //     let year = String(item.getFullYear());
-    //     let month = (String(item.getMonth() + 1)).padStart(2, '0');
-    //     let day = (String(item.getDate())).padStart(2, '0');
-        
-    //     return parseInt(year + month + day, 10);
-    // });
-
-
-
-    // const query = `
-    //     SELECT 
-    //         date,
-    //         SUM(total_time) AS total_time
-    //     FROM 
-    //         logs
-    //     WHERE 
-    //         date BETWEEN ${intDates[0]} AND ${intDates[intDates.length - 1]}
-    //     GROUP BY 
-    //         date
-    //     ORDER BY 
-    //         date DESC;
-    // `;
-
-    // db.all(query, [], (err, rows) => {
-    //     if (err) {
-    //         console.error(err.message);
-    //         res.status(500).json({ error: 'Internal Server Error' });
-    //     } else {
-    //         const results = {};
-
-    //         // Organize data by day
-    //         results.day_results = intDates.map(date => {
-    //             const matchingRow = rows.find(row => row.date === date);
-    //             return {
-    //                 date,
-    //                 total_time: matchingRow ? matchingRow.total_time : 0
-    //             };
-    //         });
-
-            
-    //         // Organize data by week
-    //         // ... similar logic as above ...
-
-    //         // Organize data by month
-    //         // ... similar logic as above ...
-
-    //         // Now you can log the result and send the response
-    //         console.log(results);
-    //         res.json(results);
-    //     }
-    // });
 
 app.get('/api/courses', (req,res) => {
     const query = `

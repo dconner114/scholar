@@ -31,7 +31,7 @@
                     <textarea id="description" name="description" required></textarea>
                     <!-- <button type="button" id="close">Cancel</button> -->
                     <div class="submit-row">
-                        <button type="submit" name="submit">Submit</button>
+                        <button id="submit" type="submit" name="submit">Submit</button>
                     </div>
                 </form>
             </div>
@@ -96,11 +96,14 @@
             </div> -->
             
             <div id="history" class="grid-item item-b">
-                <h1>History</h1>
-                <h3>Month</h3>
-                <canvas id="monthChart"></canvas>
-                <h3 id="cumulative_time">Total time: Err</h3>
+                <h1>Analytics</h1>
+                <h3>Month Totals</h3>
+                <canvas id="monthChart"></canvas>   
+                <h2 id="cumulative_time"></h3>
+                <h2 id="month_total"></h2>
+                <h3>Total Hours Over Time</h3>
                 <canvas id="cumulative"></canvas>
+                
             </div>
     
             <div id="logData" class="grid-item item-c">
@@ -118,7 +121,7 @@
                                 <th>Start</th>
                                 <th>End</th>
                                 <th>Description</th>
-                                <th>Total time (m)</th>
+                                <th>Total time</th>
                             </tr>
                         </thead>
                         <tbody>

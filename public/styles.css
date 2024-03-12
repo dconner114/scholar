@@ -4,7 +4,7 @@ html {
 
 body {
   margin: 0;
-  max-height: 100vh;
+  max-height: 90vh;
   background-color: #FFFFFF;
 }
 
@@ -12,6 +12,7 @@ body {
   background-color: #ECEFE5;
   color: #191D17;
   padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .main-body {
@@ -33,6 +34,10 @@ body {
 h1 {
   text-align: start;
   margin: 0;
+}
+
+h2 {
+  color: #3C4B37;
 }
 
 p {
@@ -140,7 +145,10 @@ button.edit-btn:hover, button.delete-btn:hover {
 
 .item-b {
   grid-column: 1/span 1;
-  grid-row: 1/span 5;
+  grid-row: 1/span 4;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
 }
 
 .item-c {
@@ -292,37 +300,45 @@ textarea {
   justify-content: stretch;
   align-items: stretch;
   margin: 0;
+  width: 100%;
+  height: 100%;
 }
 
 .pomodoro-item-a {
-  text-align: center;
   grid-column: 1/span 2;
   grid-row: 1/span 2;
+  text-align: center;
+  font-size: 5em;
 }
 
 .pomodoro-item-b {
   grid-column: 1/span 1;
   grid-row: 3/span 1;
+  font-weight: bold;
 }
 
 .pomodoro-item-c {
   grid-column: 2/span 1;
   grid-row: 3/span 1;
+  font-weight: bold;
 }
 
 .pomodoro-item-1 {
   grid-column: 3/span 1;
   grid-row: 1/span 1;
+  font-weight: bold;
 }
 
 .pomodoro-item-2 {
   grid-column: 3/span 1;
   grid-row: 2/span 1;
+  font-weight: bold;
 }
 
 .pomodoro-item-3 {
   grid-column: 3/span 1;
   grid-row: 3/span 1;
+  font-weight: bold;
 }
 
 h5 {

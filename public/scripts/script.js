@@ -1,5 +1,8 @@
 document.addEventListener('DOMContentLoaded', function () {
 
+    var monthChart = null;
+    var cumulativeChart = null;
+
     const notificationBar = document.querySelector('.notification-bar');
     notificationBar.style.display = 'none';
     var notificationText = notificationBar.querySelector('h5');
@@ -10,9 +13,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function displayNotification(success, message) {
         notificationText.innerHTML = message;
-        notificationBar.style.display = 'flex';
-
+        notificationBar.style.display = "flex";
     }
+
     function loadChartData() {
         fetch('/api/history') 
             .then(response => response.json())
@@ -21,10 +24,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 
                 const ctx_month = document.getElementById('monthChart');
                 const cumulative_time = document.getElementById('cumulative_time');
-                cumulative_time.innerHTML = `Total time: ${data.cumulative_time}, Hours this week: ${data.hoursThisWeek}`
+                const month_total = document.getElementById('month_total')
+                cumulative_time.innerHTML = `Total time: ${data.cumulative_time}`;
+                month_total.innerHTML = `Hours this week: ${data.hoursThisWeek}`
                 const ctx_cumulative = document.getElementById('cumulative');
 
-                new Chart(ctx_cumulative, {
+                cumulativeChart = new Chart(ctx_cumulative, {
                     type: 'line',
                     data: {
                     labels: data.cumulative.map(item => `${String(item.date).substring(4, 6)}/${String(item.date).substring(2, 4)}`),
@@ -58,7 +63,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     monthLabels.push(months[parseInt(key.substring(key.length-2, key.length))-1])
                 })
 
-                new Chart(ctx_month, {
+                monthChart = new Chart(ctx_month, {
                     type: 'bar',
                     data: {
                         labels: monthLabels,
@@ -96,6 +101,23 @@ document.addEventListener('DOMContentLoaded', function () {
             .catch(error => console.error('Error fetching chart data:', error));
     }
     loadChartData()
+
+    function refreshChartData() {
+        fetch('/api/history') 
+            .then(response => response.json())
+            .then(data => {
+                //const ctx_month = document.getElementById('monthChart');
+                monthChart.data.datasets[0].data = Object.values(data.monthTracker);
+                monthChart.update();
+
+                const cumulative_time = document.getElementById('cumulative_time');
+                cumulative_time.innerHTML = `Total time: ${data.cumulative_time}<br>Hours this week: ${data.hoursThisWeek}`;
+
+                cumulativeChart.data.datasets[0].data = data.cumulative.map(item => item.time / 60.0)
+                cumulativeChart.update();
+            })
+            .catch(error => console.error('Error fetching chart data:', error));
+    }
 
     // Function to fetch and display logs data
     function loadLogsData() {
@@ -208,6 +230,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 option.textContent = project; 
                 projectSelect.appendChild(option);
             });
+
+            const entryFormSubmit = document.getElementById('submit')
+
             if (entryId > -1) {
                 fetch(`/api/logs/${entryId}`)
                     .then(response => response.json())
@@ -277,6 +302,13 @@ document.addEventListener('DOMContentLoaded', function () {
         modalElements.forEach(modal => {
             modal.style.display = "none";
         })
+    }
+
+    function refreshApp() {
+        loadLogsData();
+        loadCourseData();
+        loadProjectData();
+        refreshChartData();
     }
 
     // Add event listener for the escape key
@@ -354,7 +386,6 @@ document.addEventListener('DOMContentLoaded', function () {
     entryForm = document.getElementById('entryForm');
     function createNewEntry(event) {
         event.preventDefault();
-        console.log(new FormData(this))
         // Serialize the form data
         var formData = new FormData(this);
     
@@ -376,9 +407,7 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(data => {
                 hideModals();
                 console.log(data.success, data.message);
-                loadLogsData();
-                loadCourseData();
-                loadProjectData();
+                refreshApp();
                 displayNotification(data.success, data.message);
             })
             .catch(error => {
@@ -410,9 +439,7 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(data => {
                 hideModals();
                 console.log(data.success, data.message);
-                loadLogsData();
-                loadCourseData();
-                loadProjectData();
+                refreshApp();
                 displayNotification(data.success, data.message);
             })
             .catch(error => {
@@ -447,7 +474,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             // Display a success message on the index page
             console.log(data.success, data.message);
-            loadCourseData();
+            refreshApp;
             // Display a success message on the index page
             displayNotification(data.success, data.message)
         })
@@ -533,9 +560,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     .then(response => response.json())
                     .then(data => {
                         // Handle the server response if needed
-                        loadCourseData();
-                        loadCourseData();
-                        loadProjectData();
+                        refreshApp();
                         displayNotification(data.success, data.message)
                         
                     })
@@ -551,7 +576,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     .then(response => response.json())
                     .then(data => {
                         // Handle the server response if needed
-                        loadProjectData()
+                        refreshApp()
                         displayNotification(data.success, data.message)
                     })
                     .catch(error => {
@@ -565,8 +590,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     .then(response => response.json())
                     .then(data => {
                         // Handle the server response if needed
-                        console.log(data);
-                        loadLogsData();
+                        refreshApp();                        
                         displayNotification(data.success, data.message)
                     })
                     .catch(error => {
