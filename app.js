@@ -41,6 +41,10 @@ function formatDateString(inputDate) {
     return formattedDate;
 }
 
+// function deFormatDateString(inputDate) {
+//     inputDate = inputDate.toString();
+// }
+
 app.get('/', (req, res) => {
     res.sendFile(path.resolve(__dirname, 'public', 'index.html'));
 })
@@ -265,10 +269,6 @@ app.get('/api/history', (req, res) => {
                 return acc;
             }, {});
 
-            for (i = currentDate.getDay(); i >= 0; i --) {
-                
-            }
-
             let cumulative_time = 0;
             rows_chronological = rows.reverse();
             let cumulative = rows_chronological.map(({ date, total_time }) => ({
@@ -281,20 +281,98 @@ app.get('/api/history', (req, res) => {
             data.cumulative = cumulative;
         
 
-            res.json(data)
-
-            //console.log(rows);
-
-            // Organize data by week
-            // ... similar logic as above ...
-
-            // Organize data by month
-            // ... similar logic as above ...
-
-            // Now you can log the result and send the response
-            // console.log(results);
-            // res.json(results);
             
+            
+            const monthsToTrack = 6;
+            let startDate = new Date(currentDate);
+            startDate.setMonth(currentDate.getMonth() - (monthsToTrack - 1))
+
+            let startYear = startDate.getFullYear();
+            let startMonth = startDate.getMonth() + 1;
+            let startDateInt = parseInt(`${startYear}${String(startMonth).padStart(2, '0')}00`);
+
+            let endYear = currentDate.getFullYear();
+            let endMonth = currentDate.getMonth() + 1;
+            let endDateInt = parseInt(`${endYear}${String(endMonth).padStart(2, '0')}31`);
+
+            console.log(`Start: ${startDateInt} \nEnd: ${endDateInt}`)
+
+            const monthQuery = `
+                SELECT 
+                    date,
+                    total_time
+                FROM 
+                    logs
+                WHERE  
+                    date BETWEEN ${startDateInt} AND ${endDateInt}
+                GROUP BY 
+                    date
+                ORDER BY 
+                    date ASC;
+            `;
+
+            var monthTracker = {}
+
+            db.all(monthQuery, [], (err, rows) => {
+                if (err) {
+                    console.error(err.message);
+                    res.status(500).json({ error: 'Internal Server Error' });
+                } else {
+                    rows.forEach(row => {
+                        var month = String(row.date).substring(0,6);
+                        var total_time = row.total_time;
+
+                        if (monthTracker.hasOwnProperty(month)) {
+                            monthTracker[month] += total_time / 60;
+                        } else {
+                            monthTracker[month] = total_time / 60;
+                        }
+                    })
+
+                    data.monthTracker = monthTracker;
+
+                    const daysToTrack = 6;
+                    let startDate = new Date(currentDate);
+                    startDate.setDate(currentDate.getDate() - (daysToTrack))
+
+                    let startYear = startDate.getFullYear();
+                    let startMonth = startDate.getMonth() + 1;
+                    let startDateInt = parseInt(`${startYear}${String(startMonth).padStart(2, '0')}${String(startDate.getDate()).padStart(2, '0')}`);
+
+                    let endYear = currentDate.getFullYear();
+                    let endMonth = currentDate.getMonth() + 1;
+                    let endDateInt = parseInt(`${endYear}${String(endMonth).padStart(2, '0')}${String(currentDate.getDate()).padStart(2, '0')}`);
+                    var dayTracker = {}
+
+                    // for (let i = daysToTrack; i >= 0; i--) {
+                    //     let temp_date = new Date(currentDate)
+                    //     temp_date.setDate(currentDate.getDate() - i);
+                    //     dayTracker[temp_date] = 0;
+                    // }
+
+                    console.log(dayTracker);
+                    const dayQuery = `
+                        SELECT 
+                            SUM(total_time) as total
+                        FROM 
+                            logs
+                        WHERE  
+                            date BETWEEN ${startDateInt} AND ${endDateInt};
+                    `;
+
+                    console.log(dayQuery);
+
+                    db.get(dayQuery, [], (err, rows) => {
+                        if (err) {
+                            console.error(err.message);
+                            res.status(500).json({ error: 'Internal Server Error' });
+                        } else {
+                            console.log(rows);
+                            data.hoursThisWeek = `${Math.floor(rows.total / 60)}hr ${rows.total % 60}m`
+                            res.json(data)
+                        }});
+                }
+            });            
         } 
     });
     return 0;
