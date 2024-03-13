@@ -1,4 +1,3 @@
-const { time } = require('console');
 const express = require('express');
 const path = require('path');
 const sqlite3 = require('sqlite3').verbose();
@@ -40,10 +39,6 @@ function formatDateString(inputDate) {
     const formattedDate = `${inputDate.slice(0, 4)}-${inputDate.slice(4, 6)}-${inputDate.slice(6)}`;
     return formattedDate;
 }
-
-// function deFormatDateString(inputDate) {
-//     inputDate = inputDate.toString();
-// }
 
 app.get('/', (req, res) => {
     res.sendFile(path.resolve(__dirname, 'public', 'index.html'));
@@ -165,7 +160,7 @@ app.delete('/api/logs/:id', (req, res) => {
         WHERE id = ${entryId};`
     db.run(query)
 
-    res.json({ success: true, message: `Entry with ID ${entryId} deleted successfully` });
+    res.json({ success: true, message: `Entry deleted successfully` });
 })
 
 app.put('/api/logs/:id', (req, res) => {
@@ -423,12 +418,41 @@ app.delete('/api/courses/:id', (req, res) => {
     console.log("trying to delete a course");
     const courseId = req.params.id;
     
-    const query = `
+    const courseQuery = `
         DELETE FROM course
         WHERE id = ${courseId};`
-    db.run(query)
 
-    res.json({ success: true, message: `Course with ID ${courseId} deleted successfully` });
+    const entryQuery = `
+        DELETE FROM logs 
+        WHERE course_id = ${courseId};`
+
+    Promise.all([
+        new Promise((resolve, reject) => {
+            db.all(courseQuery, [], (err, rows) => {
+                if (err) {
+                    console.error(err);
+                    reject(err);
+                } else {
+                    resolve(this.changes);
+                }
+            });
+        }),
+        new Promise((resolve, reject) => {
+            db.all(entryQuery, [], (err, rows) => {
+                if (err) {
+                    console.error(err);
+                    reject(err);
+                } else {
+                    resolve(this.changes);
+                }
+            });
+        })
+    ]).then(() => {
+        res.status(200).json({success: true, message: 'Course deleted successfully'})
+        
+    }).catch(error => {
+        res.status(500).json({ error: 'Internal Server Error' });
+    });
 })
 
 app.get('/api/projects', (req,res) => {
@@ -486,15 +510,44 @@ app.post('/api/projects', (req, res) => {
 })
 
 app.delete('/api/projects/:id', (req, res) => {
-    console.log("trying to delete a project");
+    console.log("trying to delete a course");
     const projectId = req.params.id;
     
-    const query = `
+    const projectQuery = `
         DELETE FROM project
         WHERE id = ${projectId};`
-    db.run(query)
 
-    res.json({success: true, message: `Project with ID ${projectId} deleted successfully` });
+    const entryQuery = `
+        DELETE FROM logs 
+        WHERE project_id = ${projectId};`
+
+    Promise.all([
+        new Promise((resolve, reject) => {
+            db.all(projectQuery, [], (err, rows) => {
+                if (err) {
+                    console.error(err);
+                    reject(err);
+                } else {
+                    resolve(this.changes);
+                }
+            });
+        }),
+        new Promise((resolve, reject) => {
+            db.all(entryQuery, [], (err, rows) => {
+                if (err) {
+                    console.error(err);
+                    reject(err);
+                } else {
+                    resolve(this.changes);
+                }
+            });
+        })
+    ]).then(() => {
+        res.status(200).json({success: true, message: 'Project deleted successfully'})
+        
+    }).catch(error => {
+        res.status(500).json({ error: 'Internal Server Error' });
+    });
 })
 
 app.get('/api/options', (req, res) => {

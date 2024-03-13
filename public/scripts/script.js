@@ -111,7 +111,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 monthChart.update();
 
                 const cumulative_time = document.getElementById('cumulative_time');
-                cumulative_time.innerHTML = `Total time: ${data.cumulative_time}<br>Hours this week: ${data.hoursThisWeek}`;
+                cumulative_time.innerHTML = `Total time: ${data.cumulative_time}`;
+                const month_total = document.getElementById('month_total');
+                month_total.innerHTML = `Hours this week: ${data.hoursThisWeek}`;
 
                 cumulativeChart.data.datasets[0].data = data.cumulative.map(item => item.time / 60.0)
                 cumulativeChart.update();
@@ -513,7 +515,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             // Display a success message on the index page
             console.log(data.success, data.message);
-            loadProjectData();
+            refreshApp();
             // Display a success message on the index page
             displayNotification(data.success, data.message)
         })

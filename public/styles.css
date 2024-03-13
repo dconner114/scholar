@@ -21,16 +21,6 @@ body {
   color: #191D17;
 }
 
-.notification-bar.sticky {
-  top: 0;
-  left: 0;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.close-notification-button {
-  float: right;
-}
-
 h1 {
   text-align: start;
   margin: 0;
@@ -148,7 +138,7 @@ button.edit-btn:hover, button.delete-btn:hover {
   grid-row: 1/span 4;
   display: flex;
   flex-direction: column;
-  justify-content: space-evenly;
+  justify-content: space-between;
 }
 
 .item-c {
@@ -341,11 +331,6 @@ textarea {
   font-weight: bold;
 }
 
-h5 {
-  margin-block-end: 0;
-  margin-block-start: 0;
-}
-
 .notification-bar {
   display: flex;
   position: fixed;
@@ -357,20 +342,26 @@ h5 {
   background-color: #C0EFB0;
   color: #002200;
   justify-content: center;
+  align-items: center;
   padding: 0.5em;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   z-index: 9999;
 }
 
+.notification-bar.sticky {
+  top: 0;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
 .notification-bar button {
-  width: default;
-  height: default;
   font-size: 0.83em;
   padding: 0px;
   color: #BBCBB2;
   background-color: inherit;
   cursor: pointer;
   margin-left: 10px;
+  margin-right: 10px;
+  text-align: center;
 }
 
 .notification-bar button:hover {
