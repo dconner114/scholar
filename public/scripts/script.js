@@ -12,6 +12,15 @@ document.addEventListener('DOMContentLoaded', function () {
     notificationClose.addEventListener('click', () => notificationBar.style.display = 'none');
 
     function displayNotification(success, message) {
+        
+        if (success) {
+            notificationBar.style.backgroundColor = '#C0EFB0'
+            notificationBar.style.color = '#002200'
+        } else {
+            notificationBar.style.backgroundColor = '#FFDAD'
+            notificationBar.style.color = '#410002'
+        }
+        
         notificationText.innerHTML = message;
         notificationBar.style.display = "flex";
     }
@@ -25,16 +34,16 @@ document.addEventListener('DOMContentLoaded', function () {
                 const ctx_month = document.getElementById('monthChart');
                 const cumulative_time = document.getElementById('cumulative_time');
                 const month_total = document.getElementById('month_total')
-                cumulative_time.innerHTML = `Total time: ${data.cumulative_time}`;
+                cumulative_time.innerHTML = `Total time: ${data.cumulative.cumulative_time}`;
                 month_total.innerHTML = `Hours this week: ${data.hoursThisWeek}`
                 const ctx_cumulative = document.getElementById('cumulative');
 
                 cumulativeChart = new Chart(ctx_cumulative, {
                     type: 'line',
                     data: {
-                    labels: data.cumulative.map(item => `${String(item.date).substring(4, 6)}/${String(item.date).substring(2, 4)}`),
+                    labels: data.cumulative.cumulative.map(item => `${String(item.date).substring(4, 6)}/${String(item.date).substring(2, 4)}`),
                     datasets: [{
-                        data: data.cumulative.map(item => item.time / 60.0),
+                        data: data.cumulative.cumulative.map(item => item.time / 60.0),
                         borderWidth: 3,
                         pointRadius: 0, //smooth line,
                         backgroundColor: '#BBCBB2'
@@ -111,11 +120,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 monthChart.update();
 
                 const cumulative_time = document.getElementById('cumulative_time');
-                cumulative_time.innerHTML = `Total time: ${data.cumulative_time}`;
+                cumulative_time.innerHTML = `Total time: ${data.cumulative.cumulative_time}`;
                 const month_total = document.getElementById('month_total');
                 month_total.innerHTML = `Hours this week: ${data.hoursThisWeek}`;
 
-                cumulativeChart.data.datasets[0].data = data.cumulative.map(item => item.time / 60.0)
+                cumulativeChart.data.datasets[0].data = data.cumulative.cumulative.map(item => item.time / 60.0)
                 cumulativeChart.update();
             })
             .catch(error => console.error('Error fetching chart data:', error));
@@ -200,7 +209,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function displayEntryModal(entryId) {
         entryForm.reset();
         // Fetch data for populating select elements
-        fetch('/api/options') // Replace with your actual API endpoint
+        fetch('/api/choices') // Replace with your actual API endpoint
             .then(response => response.json())
             .then(data => {
             
@@ -271,7 +280,7 @@ document.addEventListener('DOMContentLoaded', function () {
             entryModal.style.display = "block";
             overlay.style.display = "block";
         });
-}
+    }
 
     function displayCourseModal() {
         if (courseForm) {
@@ -308,8 +317,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function refreshApp() {
         loadLogsData();
-        loadCourseData();
         loadProjectData();
+        loadCourseData();
         refreshChartData();
     }
 
@@ -398,7 +407,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     
         // Send a standard form submission
-        fetch('/', {
+        fetch('/api/logs/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -476,7 +485,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             // Display a success message on the index page
             console.log(data.success, data.message);
-            refreshApp;
+            refreshApp();
             // Display a success message on the index page
             displayNotification(data.success, data.message)
         })
@@ -564,7 +573,6 @@ document.addEventListener('DOMContentLoaded', function () {
                         // Handle the server response if needed
                         refreshApp();
                         displayNotification(data.success, data.message)
-                        
                     })
                     .catch(error => {
                         console.error('Error deleting item:', error);

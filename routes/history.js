@@ -76,11 +76,11 @@ function getMonthTrackerData() {
         let endYear = currentDate.getFullYear();
         let endMonth = currentDate.getMonth() + 1;
         let endDateInt = parseInt(`${endYear}${String(endMonth).padStart(2, '0')}31`);
-
+        
         const query = `
             SELECT 
                 date,
-                total_time
+                SUM(total_time) AS total_time
             FROM 
                 logs
             WHERE  
@@ -99,18 +99,15 @@ function getMonthTrackerData() {
             reject("Error fetching month data from database.");
             return;
         }
-            
         rows.forEach(row => {
             var month = String(row.date).substring(0,6);
             var total_time = row.total_time;
-
             if (monthTracker.hasOwnProperty(month)) {
                 monthTracker[month] += total_time / 60;
             } else {
                 monthTracker[month] = total_time / 60;
             }
         })
-
         resolve(monthTracker);
     });
 }
