@@ -81,31 +81,25 @@
         <h5>This is a notification</h5>
         <button class="close-notification-button">X</button>
     </div>
-
-    <div class="top-bar">
-        <h1>Scholar</h1>
-    </div>
-
-
     
     <div class="main-body">
         <div class="grid-container">
             
-            <!-- <div id="summary" class="grid-item item-a">
-                summary here
-            </div> -->
-            
+            <div class="grid-item item-a logo">
+                <img  style="padding-left: 40px; height: 150px; width: 150px;"src="Scholar_square.png">
+                <h1 style="padding-left: 10px; font-size: 64px;">Scholar</h1>
+            </div>
             <div id="history" class="grid-item item-b">
                 <h1>Analytics</h1>
-                <div>
+                <div class="chart-container">
                     <h3>Month Totals</h3>
                     <canvas id="monthChart"></canvas>   
                 </div>
-                <div>
+                <div class="chart-container">
                     <h2 id="cumulative_time"></h2>
                     <h2 id="month_total"></h2>
                 </div>
-                <div>
+                <div class="chart-container">
                     <h3>Total Hours Over Time</h3>
                     <canvas id="cumulative"></canvas>
                 </div>

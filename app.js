@@ -4,7 +4,7 @@ const Database = require('better-sqlite3')
 const fs = require('fs');
 
 const app = express();
-const port = 5000;
+const port = 8000;
 
 const databasePath = 'timelogs.db';
 

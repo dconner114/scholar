@@ -29,8 +29,6 @@ document.addEventListener('DOMContentLoaded', function () {
         fetch('/api/history') 
             .then(response => response.json())
             .then(data => {
-                
-                
                 const ctx_month = document.getElementById('monthChart');
                 const cumulative_time = document.getElementById('cumulative_time');
                 const month_total = document.getElementById('month_total')

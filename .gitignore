@@ -3,3 +3,4 @@ backup_db/
 timelogs.db
 preload.js
 main.js
+.dockerignore

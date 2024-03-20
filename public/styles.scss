@@ -6,6 +6,7 @@
 $background-color: #FFFFFF;
 //$background-color: #3C4B37;
 $table-color: #F8FBF1;
+$deep-background-color:#FFFFFF;
 
 $primary-color: #73796E;
 $card-color: #ECEFE5;
@@ -25,6 +26,7 @@ $primary-text-color: #191D17;
 $secondary-text-color: #F2F5EB;
 
 $card-radius: 35px;
+$entry-hover-radius: 15px;
 
 
 // $background-color: #F9F1F2;
@@ -49,20 +51,25 @@ html {
 body {
     margin: 0;
     max-height:90vh;
-    background-color: $background-color;
+    background-color: $deep-background-color;
 }
 
-.top-bar {
-    background-color: $card-color;
-    color: $primary-text-color;
-    padding: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+.logo {
+    align-items: center;
+    justify-content: center;
 }
 
 .main-body {
-    margin: 2.5vh 2.5vw;
-    background-color:$background-color;
+    // margin-top: 100px;
+    margin: 0 2.5vw;
+    background-color: $deep-background-color;
     color: $primary-text-color;
+}
+
+.chart-container {
+    background-color: $background-color;
+    padding: 20px;
+    border-radius: $entry-hover-radius;
 }
 
 h1 {
@@ -143,8 +150,6 @@ button.edit-btn:hover, button.delete-btn:hover {
     color: $button-color;
     background-color:$card-color;
     cursor: pointer;
-    
-
 }
 
 .header .close-button:hover {
@@ -155,16 +160,15 @@ button.edit-btn:hover, button.delete-btn:hover {
     box-shadow: none;
 }
 
-
-
 .grid-container {
+    padding-top: 40px;
     display: grid;
     grid-template-columns: 1fr 2fr 1fr;
     grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
     grid-gap: 15px;
     justify-content: center;
     align-items: stretch; 
-    max-height: 90vh;
+    max-height: 95vh;
 }
 
 .grid-item {
@@ -173,19 +177,26 @@ button.edit-btn:hover, button.delete-btn:hover {
     color: $primary-text-color;
     padding: 40px;
     text-align: center;
-    justify-content: center;
+    justify-content: start;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
 }
 
 .item-a {
     grid-column: 1 / span 1;
     grid-row: 1 / span 1;
+    display: flex;
+    flex-direction: row;
+    background-color: $background-color;
+    box-shadow: none;
+    align-items: center;
 }
 
 .item-b {
     grid-column: 1 / span 1; 
-    grid-row: 1 / span 4;
+    grid-row: 2 / span 4;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -196,7 +207,6 @@ button.edit-btn:hover, button.delete-btn:hover {
     grid-column: 2 / span 1;
     grid-row: 1 / span 5;
 }
-
 .item-d {
     grid-column: 3 / span 1;
     grid-row: 1 / span 1;
@@ -257,18 +267,43 @@ button.edit-btn:hover, button.delete-btn:hover {
 /* Table styles */
 
 .table-wrapper {
-    height: auto;
-    padding: 10px;
-    overflow-y: auto; 
-    //background-color: $table-color;
-    border-radius: 10px;
+    background-color: $background-color;
+    padding-left: 30px;
+    padding-right: 30px;
+    padding-top: 20px; 
+    padding-bottom: 20px;
+    border-radius: $entry-hover-radius;
+    flex-grow: 1;
+    overflow-y: auto;
+    
 }
+
 table {
-    overflow-y: hidden;
     border-collapse: collapse;
     width: 100%;
-    //background-color: $table-color;
 }
+
+/* Define scrollbar */
+::-webkit-scrollbar {
+    width: $entry-hover-radius; /* Set the width of the scrollbar */
+    height: 0;
+}
+
+/* Define scrollbar track */
+::-webkit-scrollbar-track {
+    background-color: $background-color; /* Set the background color of the scrollbar track */
+    border-radius: $entry-hover-radius;
+}
+
+/* Define scrollbar thumb */
+::-webkit-scrollbar-thumb {
+    background-color: $button-color; /* Set the color of the scrollbar thumb */
+    border-radius: $entry-hover-radius; /* Set border radius to make it round */
+    background-clip: padding-box;
+    background-clip: padding-box;
+    border: 3px solid $background-color; 
+}
+
 
 tr.entry {
     transition: background-color 0.2s, color 0.2s;
@@ -280,20 +315,26 @@ tr.entry:hover {
 }
 
 td.left {
-    border-top-left-radius: 20px;
-    border-bottom-left-radius: 20px; 
+    border-top-left-radius: 100px;
+    border-bottom-left-radius: 100px; 
+    padding-left: 10px;
 }
 
 td.right {
-    border-top-right-radius: 20px;
-    border-bottom-right-radius: 20px;
+    border-top-right-radius: 100px;
+    border-bottom-right-radius: 100px;
+    padding-right: 10px;
+    text-align: end;
 }
 
 td, th {
-    border: 0px;
     padding-top: 8px;
     padding-bottom: 8px;
     text-align: left;
+}
+
+td {
+    border-top: 1px solid $card-color;
 }
 
 .formgrid {
@@ -385,11 +426,6 @@ textarea {
     font-weight: bold;
 }
 
-// h5 {
-//     margin-block-end: 0;
-//     margin-block-start: 0;
-// }
-
 .notification-bar {
     display:flex;
     position: fixed;
@@ -432,3 +468,5 @@ textarea {
     transform: none;
     box-shadow: none;
 }
+
+

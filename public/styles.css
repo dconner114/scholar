@@ -8,17 +8,21 @@ body {
   background-color: #FFFFFF;
 }
 
-.top-bar {
-  background-color: #ECEFE5;
-  color: #191D17;
-  padding: 20px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+.logo {
+  align-items: center;
+  justify-content: center;
 }
 
 .main-body {
-  margin: 2.5vh 2.5vw;
+  margin: 0 2.5vw;
   background-color: #FFFFFF;
   color: #191D17;
+}
+
+.chart-container {
+  background-color: #FFFFFF;
+  padding: 20px;
+  border-radius: 15px;
 }
 
 h1 {
@@ -108,13 +112,14 @@ button.edit-btn:hover, button.delete-btn:hover {
 }
 
 .grid-container {
+  padding-top: 40px;
   display: grid;
   grid-template-columns: 1fr 2fr 1fr;
   grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
   grid-gap: 15px;
   justify-content: center;
   align-items: stretch;
-  max-height: 90vh;
+  max-height: 95vh;
 }
 
 .grid-item {
@@ -123,19 +128,26 @@ button.edit-btn:hover, button.delete-btn:hover {
   color: #191D17;
   padding: 40px;
   text-align: center;
-  justify-content: center;
+  justify-content: start;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
 }
 
 .item-a {
   grid-column: 1/span 1;
   grid-row: 1/span 1;
+  display: flex;
+  flex-direction: row;
+  background-color: #FFFFFF;
+  box-shadow: none;
+  align-items: center;
 }
 
 .item-b {
   grid-column: 1/span 1;
-  grid-row: 1/span 4;
+  grid-row: 2/span 4;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -205,16 +217,40 @@ button.edit-btn:hover, button.delete-btn:hover {
 
 /* Table styles */
 .table-wrapper {
-  height: auto;
-  padding: 10px;
+  background-color: #FFFFFF;
+  padding-left: 30px;
+  padding-right: 30px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  border-radius: 15px;
+  flex-grow: 1;
   overflow-y: auto;
-  border-radius: 10px;
 }
 
 table {
-  overflow-y: hidden;
   border-collapse: collapse;
   width: 100%;
+}
+
+/* Define scrollbar */
+::-webkit-scrollbar {
+  width: 15px; /* Set the width of the scrollbar */
+  height: 0;
+}
+
+/* Define scrollbar track */
+::-webkit-scrollbar-track {
+  background-color: #FFFFFF; /* Set the background color of the scrollbar track */
+  border-radius: 15px;
+}
+
+/* Define scrollbar thumb */
+::-webkit-scrollbar-thumb {
+  background-color: #BBCBB2; /* Set the color of the scrollbar thumb */
+  border-radius: 15px; /* Set border radius to make it round */
+  background-clip: padding-box;
+  background-clip: padding-box;
+  border: 3px solid #FFFFFF;
 }
 
 tr.entry {
@@ -227,20 +263,26 @@ tr.entry:hover {
 }
 
 td.left {
-  border-top-left-radius: 20px;
-  border-bottom-left-radius: 20px;
+  border-top-left-radius: 100px;
+  border-bottom-left-radius: 100px;
+  padding-left: 10px;
 }
 
 td.right {
-  border-top-right-radius: 20px;
-  border-bottom-right-radius: 20px;
+  border-top-right-radius: 100px;
+  border-bottom-right-radius: 100px;
+  padding-right: 10px;
+  text-align: end;
 }
 
 td, th {
-  border: 0px;
   padding-top: 8px;
   padding-bottom: 8px;
   text-align: left;
+}
+
+td {
+  border-top: 1px solid #ECEFE5;
 }
 
 .formgrid {
