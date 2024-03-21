@@ -121,8 +121,9 @@ router.get('/:id', async (req, res) => {
 });
 
 router.delete('/:id', (req, res) => {
-    console.log("trying to delete an entry");
+    
     const entryId = req.params.id;
+    console.log(`trying to delete an entry with id: ${entryId}`);
     
     const query = `
         DELETE FROM logs

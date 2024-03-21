@@ -8,6 +8,30 @@ document.addEventListener('DOMContentLoaded', function () {
     var notificationText = notificationBar.querySelector('h5');
     const notificationClose = document.querySelector('.close-notification-button')
 
+    current_id = null;
+    new_entry = false;
+    delete_type = null;
+
+    addGlobalEventListener("click", "delete-btn", e => {
+        displayConfirmationModal(e);
+    })
+
+    addGlobalEventListener("click", "edit-btn", e => {
+        current_id = e.target.getAttribute('data-entry-id');
+        new_entry = false;
+        displayEntryModal();
+    })
+
+    addGlobalEventListener("click", "new-btn", e => {
+        new_entry = true;
+        displayEntryModal();
+    })
+
+    function addGlobalEventListener(type, selector, callback) {
+        document.addEventListener(type, e=> {
+            if (e.target.classList.contains(selector)) callback(e)
+        })
+    }
 
     notificationClose.addEventListener('click', () => notificationBar.style.display = 'none');
 
@@ -151,7 +175,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         <td class="description">${row.description || ''}</td>
                         <td>${formatTime(row.total_time)}</td>
                         <td class="right">
-                            <button class="delete-btn" data-entry-id="${row.id}">Del</button>
+                            <button class="delete-btn log" data-entry-id="${row.id}">Del</button>
                             <button class="edit-btn" data-entry-id="${row.id}">Edit</button>
                         </td>
                     </tr>`;
@@ -173,7 +197,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     <td class="left">${row.course_name}</td>
                     <td>${formatTime(row.total_time)}</td>
                     <td class="right">
-                            <button class="delete-btn course-btn" id="confirm-req" data-entry-id="${row.id}">Del</button>
+                    <button class="delete-btn course" data-entry-id="${row.id}">Del</button>
                         </td>
                     </tr>`
                     table.querySelector('tbody').insertAdjacentHTML('beforeend', newRow);
@@ -194,7 +218,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     <td class="left">${row.project_name}</td>
                     <td>${formatTime(row.total_time)}</td>
                     <td class="right">
-                            <button class="delete-btn project-btn" id="confirm-req" data-entry-id="${row.id}">Del</button>
+                    <button class="delete-btn project" data-entry-id="${row.id}">Del</button>
                         </td>
                     <tr>`
                     table.querySelector('tbody').insertAdjacentHTML('beforeend', newRow);
@@ -204,7 +228,20 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     loadProjectData()
 
-    function displayEntryModal(entryId) {
+    const entryFormSubmit = document.getElementById('submit')
+
+    entryForm.addEventListener("submit", handleSubmit)
+
+    function handleSubmit() {
+        if (new_entry) {
+            createNewEntry();
+        } else {
+            editEntry();
+        }
+    }
+
+
+    function displayEntryModal() {
         entryForm.reset();
         // Fetch data for populating select elements
         fetch('/api/choices') // Replace with your actual API endpoint
@@ -240,10 +277,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 projectSelect.appendChild(option);
             });
 
-            const entryFormSubmit = document.getElementById('submit')
-
-            if (entryId > -1) {
-                fetch(`/api/logs/${entryId}`)
+            
+            if (!new_entry) {
+                fetch(`/api/logs/${current_id}`)
                     .then(response => response.json())
                     .then(entryData => {
                         // Assuming your server response provides data in the expected format
@@ -265,14 +301,6 @@ document.addEventListener('DOMContentLoaded', function () {
         })
         .catch(error => console.error('Error fetching options:', error))
         .finally(() => {
-            entryForm.removeEventListener('submit', createNewEntry);
-            entryForm.removeEventListener('submit', event => editEntry(event, entryId));
-
-            if (entryId > -1) {
-                entryForm.addEventListener('submit', event => editEntry(event, entryId));
-            } else {
-                entryForm.addEventListener('submit', createNewEntry);
-            }
             // Display the overlay and modal
             hideModals();
             entryModal.style.display = "block";
@@ -302,7 +330,18 @@ document.addEventListener('DOMContentLoaded', function () {
         overlay.style.display = "block";
     }
 
-    function displayConfirmationModal() {
+    function displayConfirmationModal(e) {
+        if (e.target.classList.contains('log')) {
+            confirmationText.innerHTML = 'This action cannot be undone';
+            delete_type = 'log';
+        } else if( e.target.classList.contains('course')) {
+            confirmationText.innerHTML = 'This will delete all data associated with this course';
+            delete_type = 'course'
+        } else if (e.target.classList.contains('project')) {
+            confirmationText.innerHTML = 'This will delete all data associated with this project';
+            delete_type = 'course';
+        }
+        current_id = e.target.getAttribute('data-entry-id');
         confirmationModal.style.display = "block";
         overlay.style.display = "block";
     }
@@ -346,6 +385,29 @@ document.addEventListener('DOMContentLoaded', function () {
     const courseModal = document.getElementById("courseModal");
     const projectModal = document.getElementById("projectModal");
     const confirmationModal = document.getElementById("confirmationModal");
+    const confirmationSubmit = document.getElementById("confirm");
+    const confirmationText = document.getElementById("confirmation-text");
+
+    confirmationSubmit.addEventListener("click", deleteEntry);
+
+    function deleteEntry() {
+        fetch(`/api/${delete_type}s/${current_id}`, {
+                method: 'DELETE',
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Handle the server response if needed
+                refreshApp();
+                hideModals();
+                displayNotification(data.success, data.message)
+            })
+            .catch(error => {
+                console.error('Error deleting item:', error);
+                displayNotification(data.success, data.message)
+            });
+    }
+
+
     const overlay = document.getElementById("overlay");
 
     modalElements = [
@@ -365,8 +427,6 @@ document.addEventListener('DOMContentLoaded', function () {
     entryButton.addEventListener("click", displayEntryModal);
     courseButton.addEventListener("click", displayCourseModal);
     projectButton.addEventListener("click", displayProjectModal);
-
-    const entryFormSubmit = document.getElementById('entryFormSubmit');
 
     // Display time in HhrMM format
     function formatTime(minutes) {
@@ -393,10 +453,9 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     entryForm = document.getElementById('entryForm');
-    function createNewEntry(event) {
-        event.preventDefault();
+    function createNewEntry() {
         // Serialize the form data
-        var formData = new FormData(this);
+        var formData = new FormData(entryForm);
     
         // Convert FormData to an object
         var formDataObject = {};
@@ -412,23 +471,22 @@ document.addEventListener('DOMContentLoaded', function () {
             },
             body: JSON.stringify(formDataObject)
         })
-            .then(response => response.json())
-            .then(data => {
-                hideModals();
-                console.log(data.success, data.message);
-                refreshApp();
-                displayNotification(data.success, data.message);
-            })
-            .catch(error => {
-                console.error('Error submitting form', error);
-                displayNotification(false, 'Error submitting form');
-            });
+        .then(response => response.json())
+        .then(data => {
+            hideModals();
+            console.log(data.success, data.message);
+            refreshApp();
+            displayNotification(data.success, data.message);
+        })
+        .catch(error => {
+            console.error('Error submitting form', error);
+            displayNotification(false, 'Error submitting form');
+        });
     }
     
-    function editEntry(event, entryId) {
-        event.preventDefault();
+    function editEntry() {;
         // Serialize the form data
-        var formData = new FormData(document.getElementById('entryForm'));
+        var formData = new FormData(entryForm);
     
         // Convert FormData to an object
         var formDataObject = {};
@@ -437,7 +495,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     
         // Send a standard form submission
-        fetch(`/api/logs/${entryId}`, {
+        fetch(`/api/logs/${current_id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
@@ -547,72 +605,72 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    document.body.addEventListener('click', function (event) {
-        const target = event.target;
+    // document.body.addEventListener('click', function (event) {
+    //     const target = event.target;
 
-        // Check if the clicked element is a delete button with id "confirm-req"
-        if (target.classList.contains('delete-btn')) {
-            // Display the confirmation modal when the delete button is clicked
-            displayConfirmationModal();
+    //     // Check if the clicked element is a delete button with id "confirm-req"
+    //     if (target.classList.contains('delete-btn')) {
+    //         // Display the confirmation modal when the delete button is clicked
+    //         displayConfirmationModal();
 
-            // Add a click event listener to the confirm button in the confirmation modal
-            const confirmButton = document.getElementById('confirm');
-            confirmButton.addEventListener('click', function() {
-                // Get the entry ID from the data-entry-id attribute
-                const entryId = target.getAttribute('data-entry-id');
+    //         // Add a click event listener to the confirm button in the confirmation modal
+    //         const confirmButton = document.getElementById('confirm');
+    //         confirmButton.addEventListener('click', function() {
+    //             // Get the entry ID from the data-entry-id attribute
+    //             const entryId = target.getAttribute('data-entry-id');
 
-                if (target.classList.contains('course-btn')) {
-                    // Send a request to the server to delete the item with the specified ID
-                    fetch(`/api/courses/${entryId}`, {
-                        method: 'DELETE',
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        // Handle the server response if needed
-                        refreshApp();
-                        displayNotification(data.success, data.message)
-                    })
-                    .catch(error => {
-                        console.error('Error deleting item:', error);
-                        displayNotification(data.success, data.message)
-                    });
-                } else if (target.classList.contains('project-btn')) {
-                    // Send a request to the server to delete the item with the specified ID
-                    fetch(`/api/projects/${entryId}`, {
-                        method: 'DELETE',
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        // Handle the server response if needed
-                        refreshApp()
-                        displayNotification(data.success, data.message)
-                    })
-                    .catch(error => {
-                        console.error('Error deleting item:', error);
-                        displayNotification(data.success, data.message)
-                    });
-                } else {
-                    fetch(`/api/logs/${entryId}`, {
-                        method: 'DELETE',
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        // Handle the server response if needed
-                        refreshApp();                        
-                        displayNotification(data.success, data.message)
-                    })
-                    .catch(error => {
-                        console.error('Error deleting item:', error);
-                        displayNotification(data.success, data.message)
-                    });
-                }
+    //             if (target.classList.contains('course-btn')) {
+    //                 // Send a request to the server to delete the item with the specified ID
+    //                 fetch(`/api/courses/${entryId}`, {
+    //                     method: 'DELETE',
+    //                 })
+    //                 .then(response => response.json())
+    //                 .then(data => {
+    //                     // Handle the server response if needed
+    //                     refreshApp();
+    //                     displayNotification(data.success, data.message)
+    //                 })
+    //                 .catch(error => {
+    //                     console.error('Error deleting item:', error);
+    //                     displayNotification(data.success, data.message)
+    //                 });
+    //             } else if (target.classList.contains('project-btn')) {
+    //                 // Send a request to the server to delete the item with the specified ID
+    //                 fetch(`/api/projects/${entryId}`, {
+    //                     method: 'DELETE',
+    //                 })
+    //                 .then(response => response.json())
+    //                 .then(data => {
+    //                     // Handle the server response if needed
+    //                     refreshApp()
+    //                     displayNotification(data.success, data.message)
+    //                 })
+    //                 .catch(error => {
+    //                     console.error('Error deleting item:', error);
+    //                     displayNotification(data.success, data.message)
+    //                 });
+    //             } else {
+    //                 fetch(`/api/logs/${entryId}`, {
+    //                     method: 'DELETE',
+    //                 })
+    //                 .then(response => response.json())
+    //                 .then(data => {
+    //                     // Handle the server response if needed
+    //                     refreshApp();                        
+    //                     displayNotification(data.success, data.message)
+    //                 })
+    //                 .catch(error => {
+    //                     console.error('Error deleting item:', error);
+    //                     displayNotification(data.success, data.message)
+    //                 });
+    //             }
                     
-                // Hide the confirmation modal after deletion
-                hideModals();
-            });
-        } else if (target.classList.contains('edit-btn')) {
-            const entryId = target.getAttribute('data-entry-id');
-            displayEntryModal(entryId)
-        }
-    });
+    //             // Hide the confirmation modal after deletion
+    //             hideModals();
+    //         });
+    //     } else if (target.classList.contains('edit-btn')) {
+    //         const entryId = target.getAttribute('data-entry-id');
+    //         displayEntryModal(entryId)
+    //     }
+    // });
 });

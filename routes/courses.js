@@ -58,13 +58,13 @@ router.delete('/:id', (req, res) => {
         DELETE FROM course
         WHERE id = ${courseId};`
 
-        const entryQuery = `
-            DELETE FROM logs 
-            WHERE course_id = ${courseId};`
+    const entryQuery = `
+        DELETE FROM logs 
+        WHERE course_id = ${courseId};`
 
     try {
-        db.prepare(courseQuery).run();
         db.prepare(entryQuery).run();
+        db.prepare(courseQuery).run();
         res.status(200).json({success: true, message: 'Course deleted'});
     } catch (error) {
         console.log(error);

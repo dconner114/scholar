@@ -70,7 +70,7 @@
         </div>
         <div id="confirmationModal" class="modal-content">
             <h2>Are you sure?</h2>
-            <p>This will delete all entries related to the project or course</p>
+            <p id="confirmation-text">This will delete all entries related to the project or course</p>
             <button id="close">Cancel</button>
             <button id="confirm">Confirm</button>
         </div>
@@ -92,7 +92,7 @@
             <div id="history" class="grid-item item-b">
                 <h1>Analytics</h1>
                 <div class="chart-container">
-                    <h3>Month Totals</h3>
+                    <h3>Monthly Totals</h3>
                     <canvas id="monthChart"></canvas>   
                 </div>
                 <div class="chart-container">
@@ -108,7 +108,7 @@
             <div id="logData" class="grid-item item-c">
                 <div class="header">
                     <h1>Sessions</h1>
-                    <button id="newEntryButton">+</button> 
+                    <button class="new-btn" id="newEntryButton">+</button> 
                 </div>
                 <div class="table-wrapper">
                     <table id="logsTable">

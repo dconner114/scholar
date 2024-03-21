@@ -61,8 +61,8 @@ router.delete('/:id', (req, res) => {
         WHERE project_id = ${projectId};`
 
         try {
-            db.prepare(projectQuery).run();
             db.prepare(entryQuery).run();
+            db.prepare(projectQuery).run();
             res.status(200).json({success: true, message: 'Project deleted'});
         } catch (error) {
             console.log(error);
