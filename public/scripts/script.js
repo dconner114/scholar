@@ -339,7 +339,7 @@ document.addEventListener('DOMContentLoaded', function () {
             delete_type = 'course'
         } else if (e.target.classList.contains('project')) {
             confirmationText.innerHTML = 'This will delete all data associated with this project';
-            delete_type = 'course';
+            delete_type = 'project';
         }
         current_id = e.target.getAttribute('data-entry-id');
         confirmationModal.style.display = "block";
