@@ -18,7 +18,7 @@ router.get('/', (req,res) => {
             logs ON project.id = logs.project_id
         GROUP BY 
             project.id
-        LIMIT 7;
+        ;
     `
     try {
         const rows = db.prepare(query).all();

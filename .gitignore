@@ -4,3 +4,4 @@ timelogs.db
 preload.js
 main.js
 .dockerignore
+timelogs_updated.db
